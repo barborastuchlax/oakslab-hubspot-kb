@@ -36,18 +36,16 @@ const LOADING_VERBS = [
   "Deconstructing", "Existentializing", "Phenomenologizing", "Dialecting", "Ideating",
 ];
 
-// --- localStorage helpers for chat sessions ---
+// --- localStorage helpers ---
 function loadChats() {
-  try {
-    return JSON.parse(localStorage.getItem("chats") || "[]");
-  } catch { return []; }
+  try { return JSON.parse(localStorage.getItem("chats") || "[]"); }
+  catch { return []; }
 }
-
 function saveChats(chats) {
   localStorage.setItem("chats", JSON.stringify(chats));
 }
 
-// --- Loading indicator with rotating verbs ---
+// --- Loading indicator ---
 function pickVerb(exclude) {
   let v;
   do { v = LOADING_VERBS[Math.floor(Math.random() * LOADING_VERBS.length)]; } while (v === exclude);
@@ -56,11 +54,8 @@ function pickVerb(exclude) {
 
 function LoadingIndicator() {
   const [verb, setVerb] = useState(() => pickVerb());
-
   useEffect(() => {
-    const interval = setInterval(() => {
-      setVerb(prev => pickVerb(prev));
-    }, 1500);
+    const interval = setInterval(() => setVerb(prev => pickVerb(prev)), 1500);
     return () => clearInterval(interval);
   }, []);
 
@@ -70,7 +65,7 @@ function LoadingIndicator() {
         <span style={{ color: "#f5f4f0", fontSize: "10px", fontWeight: 700 }}>OL</span>
       </div>
       <div style={{ background: "#fff", border: "1px solid #e8e6e0", borderRadius: "4px 16px 16px 16px", padding: "12px 20px", display: "flex", gap: "8px", alignItems: "center" }}>
-        <span style={{ color: "#999", fontSize: "13px", fontStyle: "italic", transition: "opacity 0.3s" }}>{verb}...</span>
+        <span style={{ color: "#999", fontSize: "13px", fontStyle: "italic" }}>{verb}...</span>
         <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
           {[0,1,2].map(j => (
             <div key={j} style={{ width: "5px", height: "5px", background: "#c8c6be", borderRadius: "50%", animation: "pulse 1.2s ease-in-out infinite", animationDelay: `${j * 0.2}s` }} />
@@ -81,14 +76,47 @@ function LoadingIndicator() {
   );
 }
 
+// --- Copy button ---
+function CopyButton({ text }) {
+  const [copied, setCopied] = useState(false);
+  function handleCopy() {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+  return (
+    <button onClick={handleCopy} style={{ background: "none", border: "1px solid #e0ded8", borderRadius: "6px", color: copied ? "#16a34a" : "#999", fontSize: "11px", padding: "3px 8px", cursor: "pointer", fontFamily: "inherit", marginTop: "8px", transition: "color 0.2s" }}
+      onMouseEnter={e => { if (!copied) e.target.style.color = "#555"; }}
+      onMouseLeave={e => { if (!copied) e.target.style.color = "#999"; }}>
+      {copied ? "Copied" : "Copy"}
+    </button>
+  );
+}
+
+// --- Flying unicorn easter egg ---
+function FlyingUnicorn({ onDone }) {
+  useEffect(() => {
+    const timer = setTimeout(onDone, 4000);
+    return () => clearTimeout(timer);
+  }, [onDone]);
+
+  return (
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", zIndex: 100, overflow: "hidden" }}>
+      <div style={{ position: "absolute", animation: "unicornFly 4s ease-in-out forwards", fontSize: "48px" }}>
+        🦄
+      </div>
+    </div>
+  );
+}
+
+// --- Markdown rendering ---
 function renderMarkdown(text) {
   const lines = text.split("\n");
   const elements = [];
   let i = 0;
-
   while (i < lines.length) {
     const line = lines[i];
-
     if (line.startsWith("## ")) {
       elements.push(<h2 key={i} style={{ fontSize: "15px", fontWeight: 700, color: "#111110", margin: "16px 0 6px", letterSpacing: "-0.01em" }}>{line.slice(3)}</h2>);
     } else if (line.startsWith("### ")) {
@@ -130,6 +158,7 @@ function formatInline(text) {
   });
 }
 
+// --- Login ---
 function LoginScreen({ onLogin }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -154,19 +183,10 @@ function LoginScreen({ onLogin }) {
         <form onSubmit={handleSubmit} style={{ maxWidth: "360px", width: "100%", padding: "0 24px" }}>
           <p style={{ fontSize: "22px", fontWeight: 700, color: "#111110", letterSpacing: "-0.02em", marginBottom: "8px" }}>Sign in</p>
           <p style={{ color: "#888", marginBottom: "24px", fontSize: "14px" }}>Enter the team password to continue.</p>
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            placeholder="Password"
-            autoFocus
-            style={{ width: "100%", border: "1px solid #e0ded8", borderRadius: "10px", padding: "12px 16px", fontSize: "14px", fontFamily: "inherit", outline: "none", background: "#fff", color: "#111110", marginBottom: "12px" }}
-          />
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" autoFocus
+            style={{ width: "100%", border: "1px solid #e0ded8", borderRadius: "10px", padding: "12px 16px", fontSize: "14px", fontFamily: "inherit", outline: "none", background: "#fff", color: "#111110", marginBottom: "12px" }} />
           {error && <p style={{ color: "#c0392b", fontSize: "13px", marginBottom: "12px" }}>{error}</p>}
-          <button type="submit"
-            style={{ width: "100%", background: "#111110", color: "#f5f4f0", border: "none", borderRadius: "10px", padding: "12px 20px", cursor: "pointer", fontSize: "14px", fontWeight: 600, fontFamily: "inherit" }}>
-            Continue
-          </button>
+          <button type="submit" style={{ width: "100%", background: "#111110", color: "#f5f4f0", border: "none", borderRadius: "10px", padding: "12px 20px", cursor: "pointer", fontSize: "14px", fontWeight: 600, fontFamily: "inherit" }}>Continue</button>
         </form>
       </div>
       <style>{`* { box-sizing: border-box; margin: 0; padding: 0; }`}</style>
@@ -174,14 +194,59 @@ function LoginScreen({ onLogin }) {
   );
 }
 
+// --- SSE stream parser ---
+async function streamChat(token, messages, onDelta, onDone, onError) {
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+    body: JSON.stringify({ messages }),
+  });
+
+  if (res.status === 401) { onError("auth"); return; }
+  if (!res.ok) { onError("api"); return; }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let fullText = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+
+    const lines = buffer.split("\n");
+    buffer = lines.pop() || "";
+
+    for (const line of lines) {
+      if (!line.startsWith("data: ")) continue;
+      const data = line.slice(6);
+      if (data === "[DONE]") continue;
+      try {
+        const parsed = JSON.parse(data);
+        if (parsed.type === "content_block_delta" && parsed.delta?.text) {
+          fullText += parsed.delta.text;
+          onDelta(fullText);
+        }
+      } catch {}
+    }
+  }
+  onDone(fullText);
+}
+
+// --- Main App ---
 export default function App() {
   const [token, setToken] = useState(() => sessionStorage.getItem("auth_token") || "");
   const [chats, setChats] = useState(() => loadChats());
   const [activeChatId, setActiveChatId] = useState(null);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [streamingText, setStreamingText] = useState("");
   const [authError, setAuthError] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== "undefined" && window.innerWidth <= 768);
+  const [showUnicorn, setShowUnicorn] = useState(false);
+  const unicornTimer = useRef(null);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -189,14 +254,18 @@ export default function App() {
   const messages = activeChat?.messages || [];
 
   useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
+  }, [messages, loading, streamingText]);
 
   const updateChat = useCallback((chatId, newMessages) => {
     setChats(prev => {
-      const updated = prev.map(c =>
-        c.id === chatId ? { ...c, messages: newMessages, updatedAt: Date.now() } : c
-      );
+      const updated = prev.map(c => c.id === chatId ? { ...c, messages: newMessages, updatedAt: Date.now() } : c);
       saveChats(updated);
       return updated;
     });
@@ -220,9 +289,7 @@ export default function App() {
       saveChats(updated);
       return updated;
     });
-    if (activeChatId === id) {
-      setActiveChatId(null);
-    }
+    if (activeChatId === id) setActiveChatId(null);
   }
 
   function handleLogin(password) {
@@ -242,6 +309,8 @@ export default function App() {
     const q = text || input.trim();
     if (!q || loading) return;
     setInput("");
+    clearTimeout(unicornTimer.current);
+    setShowUnicorn(false);
 
     let chatId = activeChatId;
     let newMessages;
@@ -250,11 +319,7 @@ export default function App() {
       chatId = Date.now().toString();
       const title = q.length > 50 ? q.slice(0, 50) + "..." : q;
       const newChat = { id: chatId, title, messages: [{ role: "user", content: q }], createdAt: Date.now(), updatedAt: Date.now() };
-      setChats(prev => {
-        const updated = [newChat, ...prev];
-        saveChats(updated);
-        return updated;
-      });
+      setChats(prev => { const updated = [newChat, ...prev]; saveChats(updated); return updated; });
       setActiveChatId(chatId);
       newMessages = [{ role: "user", content: q }];
     } else {
@@ -263,100 +328,93 @@ export default function App() {
     }
 
     setLoading(true);
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({ messages: newMessages }),
-      });
-      if (res.status === 401) {
-        setAuthError(true);
+    setStreamingText("");
+
+    await streamChat(
+      token,
+      newMessages,
+      (partial) => setStreamingText(partial),
+      (final) => {
+        const reply = final || "Sorry, I couldn't get a response.";
+        updateChat(chatId, [...newMessages, { role: "assistant", content: reply }]);
+        setStreamingText("");
         setLoading(false);
-        return;
+        inputRef.current?.focus();
+        clearTimeout(unicornTimer.current);
+        unicornTimer.current = setTimeout(() => setShowUnicorn(true), 5000);
+      },
+      (errType) => {
+        if (errType === "auth") {
+          setAuthError(true);
+        } else {
+          updateChat(chatId, [...newMessages, { role: "assistant", content: "Sorry, I couldn't get a response." }]);
+        }
+        setStreamingText("");
+        setLoading(false);
       }
-      const data = await res.json();
-      const reply = data.content?.find(b => b.type === "text")?.text || "Sorry, I couldn't get a response.";
-      const finalMessages = [...newMessages, { role: "assistant", content: reply }];
-      updateChat(chatId, finalMessages);
-    } catch {
-      const finalMessages = [...newMessages, { role: "assistant", content: "Sorry, I couldn't get a response." }];
-      updateChat(chatId, finalMessages);
-    }
-    setLoading(false);
-    inputRef.current?.focus();
+    );
   }
 
-  if (!token || authError) {
-    return <LoginScreen onLogin={handleLogin} />;
-  }
+  if (!token || authError) return <LoginScreen onLogin={handleLogin} />;
 
   const empty = messages.length === 0 && !activeChatId;
+  const showSidebar = !isMobile || sidebarOpen;
 
   return (
     <div style={{ display: "flex", height: "100dvh", overflow: "hidden", background: "#f5f4f0", fontFamily: "'Inter', -apple-system, sans-serif", fontSize: "14px", color: "#333" }}>
-      {/* Sidebar overlay on mobile */}
-      {sidebarOpen && (
+      {/* Sidebar overlay */}
+      {isMobile && sidebarOpen && (
         <div onClick={() => setSidebarOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", zIndex: 10 }} />
       )}
 
       {/* Sidebar */}
-      <div style={{
-        width: "280px", background: "#1a1a19", color: "#f5f4f0", display: "flex", flexDirection: "column", flexShrink: 0,
-        position: sidebarOpen ? "fixed" : undefined, inset: sidebarOpen ? "0 auto 0 0" : undefined, zIndex: sidebarOpen ? 20 : undefined,
-        height: "100%",
-        transform: sidebarOpen ? "translateX(0)" : undefined,
-        ...(typeof window !== "undefined" && window.innerWidth <= 768 && !sidebarOpen ? { display: "none" } : {}),
-      }}>
-        <div style={{ padding: "16px", flexShrink: 0 }}>
-          <button onClick={startNewChat} style={{ width: "100%", background: "#2a2a29", border: "1px solid #333", borderRadius: "8px", color: "#f5f4f0", padding: "10px 14px", cursor: "pointer", fontSize: "13px", fontWeight: 600, fontFamily: "inherit", textAlign: "left" }}>
-            + New chat
-          </button>
+      {showSidebar && (
+        <div style={{
+          width: "280px", background: "#1a1a19", color: "#f5f4f0", display: "flex", flexDirection: "column", flexShrink: 0, height: "100%",
+          ...(isMobile ? { position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 20 } : {}),
+        }}>
+          <div style={{ padding: "16px", flexShrink: 0 }}>
+            <button onClick={startNewChat} style={{ width: "100%", background: "#2a2a29", border: "1px solid #333", borderRadius: "8px", color: "#f5f4f0", padding: "10px 14px", cursor: "pointer", fontSize: "13px", fontWeight: 600, fontFamily: "inherit", textAlign: "left" }}>
+              + New chat
+            </button>
+          </div>
+          <div style={{ flex: 1, overflowY: "auto", padding: "0 8px 16px" }}>
+            {chats.map(c => (
+              <div key={c.id} onClick={() => selectChat(c.id)}
+                style={{ padding: "10px 12px", borderRadius: "8px", cursor: "pointer", marginBottom: "2px", background: c.id === activeChatId ? "#333" : "transparent", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}
+                onMouseEnter={e => { if (c.id !== activeChatId) e.currentTarget.style.background = "#2a2a29"; }}
+                onMouseLeave={e => { if (c.id !== activeChatId) e.currentTarget.style.background = "transparent"; }}>
+                <span style={{ fontSize: "13px", color: "#ccc", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{c.title}</span>
+                <button onClick={(e) => deleteChat(c.id, e)} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "14px", padding: "2px 4px", flexShrink: 0, lineHeight: 1 }}
+                  onMouseEnter={e => e.target.style.color = "#f5f4f0"} onMouseLeave={e => e.target.style.color = "#666"}>×</button>
+              </div>
+            ))}
+            {chats.length === 0 && <p style={{ color: "#555", fontSize: "12px", padding: "12px", textAlign: "center" }}>No conversations yet</p>}
+          </div>
+          <div style={{ padding: "12px 16px", borderTop: "1px solid #2a2a29" }}>
+            <button onClick={handleLogout} style={{ background: "none", border: "none", color: "#666", fontSize: "12px", cursor: "pointer", fontFamily: "inherit", padding: 0 }}
+              onMouseEnter={e => e.target.style.color = "#ccc"} onMouseLeave={e => e.target.style.color = "#666"}>Sign out</button>
+          </div>
         </div>
-        <div style={{ flex: 1, overflowY: "auto", padding: "0 8px 16px" }}>
-          {chats.map(c => (
-            <div key={c.id} onClick={() => selectChat(c.id)}
-              style={{ padding: "10px 12px", borderRadius: "8px", cursor: "pointer", marginBottom: "2px", background: c.id === activeChatId ? "#333" : "transparent", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}
-              onMouseEnter={e => { if (c.id !== activeChatId) e.currentTarget.style.background = "#2a2a29"; }}
-              onMouseLeave={e => { if (c.id !== activeChatId) e.currentTarget.style.background = "transparent"; }}>
-              <span style={{ fontSize: "13px", color: "#ccc", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{c.title}</span>
-              <button onClick={(e) => deleteChat(c.id, e)} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "14px", padding: "2px 4px", flexShrink: 0, lineHeight: 1 }}
-                onMouseEnter={e => e.target.style.color = "#f5f4f0"}
-                onMouseLeave={e => e.target.style.color = "#666"}>
-                ×
-              </button>
-            </div>
-          ))}
-          {chats.length === 0 && (
-            <p style={{ color: "#555", fontSize: "12px", padding: "12px", textAlign: "center" }}>No conversations yet</p>
-          )}
-        </div>
-        <div style={{ padding: "12px 16px", borderTop: "1px solid #2a2a29" }}>
-          <button onClick={handleLogout} style={{ background: "none", border: "none", color: "#666", fontSize: "12px", cursor: "pointer", fontFamily: "inherit", padding: 0, letterSpacing: "0.02em" }}
-            onMouseEnter={e => e.target.style.color = "#ccc"}
-            onMouseLeave={e => e.target.style.color = "#666"}>
-            Sign out
-          </button>
-        </div>
-      </div>
+      )}
 
-      {/* Main content */}
+      {/* Main */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
         {/* Header */}
         <div style={{ background: "#111110", color: "#f5f4f0", padding: "0 24px", height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="sidebar-toggle" style={{ background: "none", border: "none", color: "#f5f4f0", fontSize: "18px", cursor: "pointer", padding: "4px 8px", display: "none" }}>
-              ☰
-            </button>
+            {isMobile && (
+              <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ background: "none", border: "none", color: "#f5f4f0", fontSize: "18px", cursor: "pointer", padding: "4px 8px" }}>☰</button>
+            )}
             <span style={{ fontWeight: 700, letterSpacing: "-0.02em", fontSize: "15px" }}>OAK'S LAB</span>
-            <span style={{ color: "#666", fontSize: "12px" }}>|</span>
-            <span style={{ color: "#c8c6be", fontSize: "13px", letterSpacing: "0.04em", textTransform: "uppercase" }}>HubSpot Knowledge Base</span>
+            {!isMobile && <>
+              <span style={{ color: "#666", fontSize: "12px" }}>|</span>
+              <span style={{ color: "#c8c6be", fontSize: "13px", letterSpacing: "0.04em", textTransform: "uppercase" }}>HubSpot Knowledge Base</span>
+            </>}
           </div>
-          <button onClick={startNewChat} className="new-chat-header" style={{ background: "none", border: "1px solid #444", borderRadius: "6px", color: "#888", fontSize: "11px", padding: "4px 10px", cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.04em", textTransform: "uppercase", display: "none" }}>
-            New chat
-          </button>
+          {isMobile && (
+            <button onClick={startNewChat} style={{ background: "none", border: "1px solid #444", borderRadius: "6px", color: "#888", fontSize: "11px", padding: "4px 10px", cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.04em", textTransform: "uppercase" }}>New chat</button>
+          )}
         </div>
 
         {/* Messages */}
@@ -366,39 +424,53 @@ export default function App() {
               <div style={{ paddingTop: "60px" }}>
                 <p style={{ fontSize: "28px", fontWeight: 700, color: "#111110", letterSpacing: "-0.03em", marginBottom: "8px" }}>What do you need to do?</p>
                 <p style={{ color: "#888", marginBottom: "40px", fontSize: "15px" }}>Ask anything about HubSpot processes, workflows, or pipeline.</p>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "10px" }}>
                   {SUGGESTIONS.map((s, i) => (
                     <button key={i} onClick={() => send(s)} style={{ background: "#fff", border: "1px solid #e0ded8", borderRadius: "10px", padding: "14px 16px", textAlign: "left", cursor: "pointer", fontSize: "13px", color: "#444", lineHeight: 1.5, transition: "border-color 0.15s", fontFamily: "inherit" }}
-                      onMouseEnter={e => e.target.style.borderColor = "#111110"}
-                      onMouseLeave={e => e.target.style.borderColor = "#e0ded8"}>
-                      {s}
-                    </button>
+                      onMouseEnter={e => e.target.style.borderColor = "#111110"} onMouseLeave={e => e.target.style.borderColor = "#e0ded8"}>{s}</button>
                   ))}
                 </div>
               </div>
             ) : (
-              messages.map((m, i) => (
-                <div key={i} style={{ marginBottom: "28px" }}>
-                  {m.role === "user" ? (
-                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                      <div style={{ background: "#111110", color: "#f5f4f0", borderRadius: "16px 16px 4px 16px", padding: "12px 18px", maxWidth: "70%", fontSize: "14px", lineHeight: 1.6 }}>
-                        {m.content}
+              <>
+                {messages.map((m, i) => (
+                  <div key={i} style={{ marginBottom: "28px" }}>
+                    {m.role === "user" ? (
+                      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <div style={{ background: "#111110", color: "#f5f4f0", borderRadius: "16px 16px 4px 16px", padding: "12px 18px", maxWidth: "70%", fontSize: "14px", lineHeight: 1.6 }}>{m.content}</div>
                       </div>
-                    </div>
-                  ) : (
+                    ) : (
+                      <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                        <div style={{ width: "28px", height: "28px", background: "#111110", borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <span style={{ color: "#f5f4f0", fontSize: "10px", fontWeight: 700, letterSpacing: "-0.02em" }}>OL</span>
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ background: "#fff", border: "1px solid #e8e6e0", borderRadius: "4px 16px 16px 16px", padding: "16px 20px", lineHeight: 1.7, color: "#222" }}>
+                            {renderMarkdown(m.content)}
+                          </div>
+                          <CopyButton text={m.content} />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+                {/* Streaming message */}
+                {loading && streamingText && (
+                  <div style={{ marginBottom: "28px" }}>
                     <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
                       <div style={{ width: "28px", height: "28px", background: "#111110", borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                         <span style={{ color: "#f5f4f0", fontSize: "10px", fontWeight: 700, letterSpacing: "-0.02em" }}>OL</span>
                       </div>
                       <div style={{ background: "#fff", border: "1px solid #e8e6e0", borderRadius: "4px 16px 16px 16px", padding: "16px 20px", flex: 1, lineHeight: 1.7, color: "#222" }}>
-                        {renderMarkdown(m.content)}
+                        {renderMarkdown(streamingText)}
                       </div>
                     </div>
-                  )}
-                </div>
-              ))
+                  </div>
+                )}
+                {/* Loading dots before stream starts */}
+                {loading && !streamingText && <LoadingIndicator />}
+              </>
             )}
-            {loading && <LoadingIndicator />}
             <div ref={bottomRef} />
           </div>
         </div>
@@ -406,28 +478,27 @@ export default function App() {
         {/* Input */}
         <div style={{ background: "#fff", borderTop: "1px solid #e8e6e0", padding: "16px 24px", flexShrink: 0 }}>
           <div style={{ maxWidth: "760px", margin: "0 auto", display: "flex", gap: "10px" }}>
-            <input
-              ref={inputRef}
-              value={input}
-              onChange={e => setInput(e.target.value)}
+            <input ref={inputRef} value={input} onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === "Enter" && !e.shiftKey && send()}
               placeholder="Ask a question about HubSpot processes..."
-              style={{ flex: 1, border: "1px solid #e0ded8", borderRadius: "10px", padding: "12px 16px", fontSize: "14px", fontFamily: "inherit", outline: "none", background: "#f5f4f0", color: "#111110" }}
-            />
+              style={{ flex: 1, border: "1px solid #e0ded8", borderRadius: "10px", padding: "12px 16px", fontSize: "14px", fontFamily: "inherit", outline: "none", background: "#f5f4f0", color: "#111110" }} />
             <button onClick={() => send()} disabled={!input.trim() || loading}
-              style={{ background: input.trim() && !loading ? "#111110" : "#e0ded8", color: input.trim() && !loading ? "#f5f4f0" : "#999", border: "none", borderRadius: "10px", padding: "12px 20px", cursor: input.trim() && !loading ? "pointer" : "default", fontSize: "13px", fontWeight: 600, fontFamily: "inherit", transition: "background 0.15s" }}>
-              Ask
-            </button>
+              style={{ background: input.trim() && !loading ? "#111110" : "#e0ded8", color: input.trim() && !loading ? "#f5f4f0" : "#999", border: "none", borderRadius: "10px", padding: "12px 20px", cursor: input.trim() && !loading ? "pointer" : "default", fontSize: "13px", fontWeight: 600, fontFamily: "inherit", transition: "background 0.15s" }}>Ask</button>
           </div>
         </div>
       </div>
 
+      {showUnicorn && <FlyingUnicorn onDone={() => setShowUnicorn(false)} />}
+
       <style>{`
         @keyframes pulse { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        @media (max-width: 768px) {
-          .sidebar-toggle { display: block !important; }
-          .new-chat-header { display: block !important; }
+        @keyframes unicornFly {
+          0% { top: 80%; left: -60px; transform: rotate(-10deg); opacity: 0; }
+          10% { opacity: 1; }
+          50% { top: 30%; left: 50%; transform: rotate(5deg); }
+          90% { opacity: 1; }
+          100% { top: -60px; left: 110%; transform: rotate(-15deg); opacity: 0; }
         }
       `}</style>
     </div>

@@ -191,6 +191,44 @@ Edge case: contact imported after 1 March 2026 merges with existing, mark origin
 
 ---
 
+## FREQUENTLY ASKED QUESTIONS
+
+### How do I create a filtered view in HubSpot?
+Go to Contacts (or Companies/Deals) > click "All filters" on the left > add your filter criteria > click "Save view" in the top right. Name it and choose whether to share it with the team or keep it private.
+
+### How do I create a report?
+Go to Reporting > Reports > Create report. Choose "Single object" for simple reports or "Custom report builder" for cross-object data. Select your data source, add filters, and pick a chart type. Save to a dashboard.
+
+### How do I set up a HubSpot integration?
+Go to Settings (gear icon) > Integrations > Connected apps > Visit App Marketplace. Search for the tool you want to connect, click "Install", and follow the authorization flow. Each integration has its own setup steps.
+
+### How do I export data from HubSpot?
+Go to the relevant object (Contacts, Companies, Deals) > select the view or filters you want > click "Export" (top right of the table). Choose format (CSV or XLSX) and which properties to include.
+
+### How do I manage email templates?
+Go to Conversations > Templates. Click "New template" to create one. Use personalization tokens (e.g. {{contact.firstname}}) for dynamic content. Templates can be shared with the team.
+
+### How do I track email opens and clicks?
+Email tracking is automatic for emails sent via HubSpot (logged in CRM). To track emails from Gmail/Outlook, install the HubSpot browser extension or Outlook add-in. Go to Settings > General > Email to configure tracking preferences.
+
+### How do I merge duplicate contacts or companies?
+Open one of the duplicate records > click "Actions" dropdown > "Merge". Search for the other duplicate. Review which property values to keep. Click "Merge". This cannot be undone.
+
+### How do I assign or reassign a contact owner?
+Open the contact record > in the left sidebar, find "Contact owner" > click the dropdown > select the new owner. Bulk reassignment: select multiple contacts in list view > click "Assign" in the toolbar.
+
+---
+
+## GENERAL HUBSPOT TIPS
+
+- **Activity feed**: Check your activity feed daily (bell icon) for task reminders, form submissions, and email replies.
+- **Notes**: Always log notes after calls or meetings — keeps the team aligned and creates a paper trail.
+- **Tasks**: Use HubSpot tasks instead of your own to-do list for CRM follow-ups. They show up in your daily queue.
+- **Board view vs. list view**: Use board view for deals pipeline (drag and drop), list view for contacts/companies (bulk actions).
+- **Keyboard shortcuts**: Press `G` then `C` to go to contacts, `G` then `D` for deals. Press `?` to see all shortcuts.
+
+---
+
 ## TO BE DECIDED (no answers yet — team discussion needed)
 
 - Tier definitions: exact criteria for Tier 1/2/3 for both contacts and companies are drafted but not yet confirmed by the team.
