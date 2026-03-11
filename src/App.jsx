@@ -198,20 +198,70 @@ Edge case: contact imported after 1 March 2026 merges with existing, mark origin
 - Inbound form updates: whether to add Company Name field and self-reported attribution to forms.
 - Lead Intake stage: to be reviewed and removed once migration complete.`;
 
-const SUGGESTED = [
-  "What do I do when I get a new MQL notification?",
+const SUGGESTIONS = [
+  "What do I do when a new MQL comes in?",
   "How do I import contacts from Clay?",
   "When should I create a deal?",
   "What's the difference between Nurture and Closed Lost?",
-  "A form stopped triggering workflows — what do I check?",
   "How do I manually add a new contact?",
+  "I've stopped receiving workflow notifications — what should I check?",
 ];
+
+function renderMarkdown(text) {
+  const lines = text.split("\n");
+  const elements = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    if (line.startsWith("## ")) {
+      elements.push(<h2 key={i} style={{ fontSize: "15px", fontWeight: 700, color: "#111110", margin: "16px 0 6px", letterSpacing: "-0.01em" }}>{line.slice(3)}</h2>);
+    } else if (line.startsWith("### ")) {
+      elements.push(<h3 key={i} style={{ fontSize: "13px", fontWeight: 700, color: "#111110", margin: "12px 0 4px", textTransform: "uppercase", letterSpacing: "0.04em" }}>{line.slice(4)}</h3>);
+    } else if (line.match(/^\d+\.\s/)) {
+      const items = [];
+      while (i < lines.length && lines[i].match(/^\d+\.\s/)) {
+        items.push(<li key={i} style={{ marginBottom: "4px" }}>{formatInline(lines[i].replace(/^\d+\.\s/, ""))}</li>);
+        i++;
+      }
+      elements.push(<ol key={`ol-${i}`} style={{ margin: "6px 0 6px 18px", padding: 0, lineHeight: 1.7 }}>{items}</ol>);
+      continue;
+    } else if (line.startsWith("- ")) {
+      const items = [];
+      while (i < lines.length && lines[i].startsWith("- ")) {
+        items.push(<li key={i} style={{ marginBottom: "4px" }}>{formatInline(lines[i].slice(2))}</li>);
+        i++;
+      }
+      elements.push(<ul key={`ul-${i}`} style={{ margin: "6px 0 6px 18px", padding: 0, lineHeight: 1.7 }}>{items}</ul>);
+      continue;
+    } else if (line.startsWith("**") && line.endsWith("**")) {
+      elements.push(<p key={i} style={{ margin: "8px 0 4px", fontWeight: 700, color: "#111110" }}>{line.slice(2, -2)}</p>);
+    } else if (line.trim() === "") {
+      elements.push(<div key={i} style={{ height: "6px" }} />);
+    } else if (line.trim()) {
+      elements.push(<p key={i} style={{ margin: "4px 0", lineHeight: 1.7 }}>{formatInline(line)}</p>);
+    }
+    i++;
+  }
+  return elements;
+}
+
+function formatInline(text) {
+  const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) return <strong key={i}>{part.slice(2, -2)}</strong>;
+    if (part.startsWith("`") && part.endsWith("`")) return <code key={i} style={{ background: "#e8e6e0", padding: "1px 5px", borderRadius: "3px", fontSize: "12px", fontFamily: "monospace" }}>{part.slice(1, -1)}</code>;
+    return part;
+  });
+}
 
 export default function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -227,181 +277,107 @@ export default function App() {
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-      
-        },
-        body: JSON.stringify({
-          model: "claude-haiku-4-5-20251001",
-          max_tokens: 1000,
-          system: SYSTEM_PROMPT,
-          messages: newMessages,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ system: SYSTEM_PROMPT, messages: newMessages }),
       });
       const data = await res.json();
       const reply = data.content?.find(b => b.type === "text")?.text || "Sorry, I couldn't get a response.";
       setMessages([...newMessages, { role: "assistant", content: reply }]);
     } catch {
-      setMessages([...newMessages, { role: "assistant", content: "Something went wrong. Please try again." }]);
+      setMessages([...newMessages, { role: "assistant", content: "Sorry, I couldn't get a response." }]);
     }
     setLoading(false);
+    inputRef.current?.focus();
   }
 
-  const isEmpty = messages.length === 0;
+  const empty = messages.length === 0;
 
   return (
-    <div style={{
-      fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-      background: "#f5f4f0",
-      minHeight: "100vh",
-      display: "flex",
-      flexDirection: "column",
-    }}>
-      <div style={{
-        background: "#111110",
-        padding: "0 32px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        height: 52,
-        flexShrink: 0,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "#fff" }}>OAK'S LAB</span>
-          <span style={{ width: 1, height: 16, background: "#333" }} />
-          <span style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: "#888" }}>HubSpot Knowledge Base</span>
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: "#f5f4f0", fontFamily: "'Inter', -apple-system, sans-serif", fontSize: "14px", color: "#333" }}>
+      {/* Header */}
+      <div style={{ background: "#111110", color: "#f5f4f0", padding: "0 32px", height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <span style={{ fontWeight: 700, letterSpacing: "-0.02em", fontSize: "15px" }}>OAK'S LAB</span>
+          <span style={{ color: "#666", fontSize: "12px" }}>|</span>
+          <span style={{ color: "#c8c6be", fontSize: "13px", letterSpacing: "0.04em", textTransform: "uppercase" }}>HubSpot Knowledge Base</span>
         </div>
-        <span style={{ fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "#555" }}>BD Team</span>
+        <span style={{ color: "#666", fontSize: "12px", letterSpacing: "0.06em", textTransform: "uppercase" }}>BD Team</span>
       </div>
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", maxWidth: 720, width: "100%", margin: "0 auto", padding: "0 24px" }}>
-        {isEmpty ? (
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", paddingBottom: 120 }}>
-            <div style={{ marginBottom: 32 }}>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "#888", marginBottom: 10 }}>Ask anything</div>
-              <div style={{ fontSize: 26, fontWeight: 400, letterSpacing: "-0.02em", color: "#111110", lineHeight: 1.2, marginBottom: 6 }}>
-                What do you need to do?
+      {/* Messages */}
+      <div style={{ flex: 1, overflowY: "auto", padding: "32px 0" }}>
+        <div style={{ maxWidth: "760px", margin: "0 auto", padding: "0 24px" }}>
+          {empty ? (
+            <div style={{ paddingTop: "60px" }}>
+              <p style={{ fontSize: "28px", fontWeight: 700, color: "#111110", letterSpacing: "-0.03em", marginBottom: "8px" }}>What do you need to do?</p>
+              <p style={{ color: "#888", marginBottom: "40px", fontSize: "15px" }}>Ask anything about HubSpot processes, workflows, or pipeline.</p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                {SUGGESTIONS.map((s, i) => (
+                  <button key={i} onClick={() => send(s)} style={{ background: "#fff", border: "1px solid #e0ded8", borderRadius: "10px", padding: "14px 16px", textAlign: "left", cursor: "pointer", fontSize: "13px", color: "#444", lineHeight: 1.5, transition: "border-color 0.15s", fontFamily: "inherit" }}
+                    onMouseEnter={e => e.target.style.borderColor = "#111110"}
+                    onMouseLeave={e => e.target.style.borderColor = "#e0ded8"}>
+                    {s}
+                  </button>
+                ))}
               </div>
-              <div style={{ fontSize: 13, color: "#888" }}>Based on the OAK'S LAB HubSpot CRM documentation.</div>
             </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-              {SUGGESTED.map(s => (
-                <button
-                  key={s}
-                  onClick={() => send(s)}
-                  style={{
-                    background: "#fff",
-                    border: "1px solid #e8e6e0",
-                    padding: "8px 14px",
-                    fontSize: 12,
-                    color: "#2a2a28",
-                    cursor: "pointer",
-                    letterSpacing: "0.01em",
-                    textAlign: "left",
-                    transition: "border-color 0.15s",
-                  }}
-                  onMouseEnter={e => e.target.style.borderColor = "#111110"}
-                  onMouseLeave={e => e.target.style.borderColor = "#e8e6e0"}
-                >
-                  {s}
-                </button>
-              ))}
+          ) : (
+            messages.map((m, i) => (
+              <div key={i} style={{ marginBottom: "28px" }}>
+                {m.role === "user" ? (
+                  <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                    <div style={{ background: "#111110", color: "#f5f4f0", borderRadius: "16px 16px 4px 16px", padding: "12px 18px", maxWidth: "70%", fontSize: "14px", lineHeight: 1.6 }}>
+                      {m.content}
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                    <div style={{ width: "28px", height: "28px", background: "#111110", borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <span style={{ color: "#f5f4f0", fontSize: "10px", fontWeight: 700, letterSpacing: "-0.02em" }}>OL</span>
+                    </div>
+                    <div style={{ background: "#fff", border: "1px solid #e8e6e0", borderRadius: "4px 16px 16px 16px", padding: "16px 20px", flex: 1, lineHeight: 1.7, color: "#222" }}>
+                      {renderMarkdown(m.content)}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+          {loading && (
+            <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", marginBottom: "28px" }}>
+              <div style={{ width: "28px", height: "28px", background: "#111110", borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ color: "#f5f4f0", fontSize: "10px", fontWeight: 700 }}>OL</span>
+              </div>
+              <div style={{ background: "#fff", border: "1px solid #e8e6e0", borderRadius: "4px 16px 16px 16px", padding: "16px 20px", display: "flex", gap: "5px", alignItems: "center" }}>
+                {[0,1,2].map(j => (
+                  <div key={j} style={{ width: "6px", height: "6px", background: "#c8c6be", borderRadius: "50%", animation: "pulse 1.2s ease-in-out infinite", animationDelay: `${j * 0.2}s` }} />
+                ))}
+              </div>
             </div>
-          </div>
-        ) : (
-          <div style={{ flex: 1, overflowY: "auto", paddingTop: 32, paddingBottom: 16 }}>
-            {messages.map((m, i) => (
-              <div key={i} style={{ marginBottom: 24 }}>
-                <div style={{
-                  fontSize: 9, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase",
-                  color: m.role === "user" ? "#888" : "#111110",
-                  marginBottom: 6,
-                }}>
-                  {m.role === "user" ? "You" : "HubSpot Guide"}
-                </div>
-                <div style={{
-                  fontSize: 13,
-                  color: "#2a2a28",
-                  lineHeight: 1.65,
-                  background: m.role === "assistant" ? "#fff" : "transparent",
-                  border: m.role === "assistant" ? "1px solid #e8e6e0" : "none",
-                  borderLeft: m.role === "assistant" ? "2px solid #111110" : "none",
-                  padding: m.role === "assistant" ? "14px 18px" : "0",
-                  whiteSpace: "pre-wrap",
-                }}>
-                  {m.content}
-                </div>
-              </div>
-            ))}
-            {loading && (
-              <div style={{ marginBottom: 24 }}>
-                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "#111110", marginBottom: 6 }}>HubSpot Guide</div>
-                <div style={{ display: "flex", gap: 5, padding: "14px 18px", background: "#fff", border: "1px solid #e8e6e0", borderLeft: "2px solid #111110", width: "fit-content" }}>
-                  {[0,1,2].map(i => (
-                    <div key={i} style={{
-                      width: 5, height: 5, borderRadius: "50%", background: "#c8c6be",
-                      animation: "pulse 1.2s ease-in-out infinite",
-                      animationDelay: `${i * 0.2}s`,
-                    }} />
-                  ))}
-                </div>
-              </div>
-            )}
-            <div ref={bottomRef} />
-          </div>
-        )}
-
-        <div style={{
-          position: isEmpty ? "absolute" : "sticky",
-          bottom: 0,
-          left: isEmpty ? "50%" : undefined,
-          transform: isEmpty ? "translateX(-50%)" : undefined,
-          width: isEmpty ? "calc(100% - 48px)" : "100%",
-          maxWidth: 720,
-          background: "#f5f4f0",
-          paddingBottom: 24,
-          paddingTop: 12,
-        }}>
-          <div style={{ display: "flex", gap: 0, border: "1px solid #111110", background: "#fff" }}>
-            <input
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && !e.shiftKey && send()}
-              placeholder="Ask a question about HubSpot processes…"
-              style={{
-                flex: 1,
-                border: "none",
-                outline: "none",
-                padding: "12px 16px",
-                fontSize: 13,
-                color: "#2a2a28",
-                background: "transparent",
-                fontFamily: "inherit",
-              }}
-            />
-            <button
-              onClick={() => send()}
-              disabled={!input.trim() || loading}
-              style={{
-                background: input.trim() && !loading ? "#111110" : "#e8e6e0",
-                border: "none",
-                padding: "0 18px",
-                cursor: input.trim() && !loading ? "pointer" : "default",
-                color: input.trim() && !loading ? "#fff" : "#aaa",
-                fontSize: 11,
-                fontWeight: 700,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                transition: "background 0.15s",
-                fontFamily: "inherit",
-              }}
-            >
-              Ask
-            </button>
-          </div>
-          <style>{`@keyframes pulse { 0%, 100% { opacity: 0.3 } 50% { opacity: 1 } }`}</style>
+          )}
+          <div ref={bottomRef} />
         </div>
       </div>
+
+      {/* Input */}
+      <div style={{ background: "#fff", borderTop: "1px solid #e8e6e0", padding: "16px 24px", flexShrink: 0 }}>
+        <div style={{ maxWidth: "760px", margin: "0 auto", display: "flex", gap: "10px" }}>
+          <input
+            ref={inputRef}
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && !e.shiftKey && send()}
+            placeholder="Ask a question about HubSpot processes..."
+            style={{ flex: 1, border: "1px solid #e0ded8", borderRadius: "10px", padding: "12px 16px", fontSize: "14px", fontFamily: "inherit", outline: "none", background: "#f5f4f0", color: "#111110" }}
+          />
+          <button onClick={() => send()} disabled={!input.trim() || loading}
+            style={{ background: input.trim() && !loading ? "#111110" : "#e0ded8", color: input.trim() && !loading ? "#f5f4f0" : "#999", border: "none", borderRadius: "10px", padding: "12px 20px", cursor: input.trim() && !loading ? "pointer" : "default", fontSize: "13px", fontWeight: 600, fontFamily: "inherit", transition: "background 0.15s" }}>
+            Ask
+          </button>
+        </div>
+      </div>
+
+      <style>{`@keyframes pulse { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} } * { box-sizing: border-box; margin: 0; padding: 0; }`}</style>
     </div>
   );
 }
