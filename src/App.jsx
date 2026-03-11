@@ -759,14 +759,14 @@ export default function App() {
             {isMobile && (
               <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ background: "none", border: "none", color: "#f5f4f0", fontSize: "18px", cursor: "pointer", padding: "4px 8px" }}>☰</button>
             )}
-            <span style={{ fontWeight: 700, letterSpacing: "-0.02em", fontSize: "15px" }}>OAK'S LAB</span>
+            <span onClick={startNewChat} style={{ fontWeight: 700, letterSpacing: "-0.02em", fontSize: "15px", cursor: "pointer" }}>OAK'S LAB</span>
             {!isMobile && <>
               <span style={{ color: "#666", fontSize: "12px" }}>|</span>
               <span style={{ color: "#c8c6be", fontSize: "13px", letterSpacing: "0.04em", textTransform: "uppercase" }}>HubSpot Knowledge Base</span>
             </>}
           </div>
           {isMobile && (
-            <button onClick={startNewChat} style={{ background: "none", border: "1px solid #444", borderRadius: "6px", color: "#888", fontSize: "11px", padding: "4px 10px", cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.04em", textTransform: "uppercase" }}>New chat</button>
+            <button onClick={startNewChat} style={{ background: "none", border: "1px solid #444", borderRadius: "6px", color: "#888", fontSize: "11px", padding: "4px 10px", cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.04em", textTransform: "uppercase" }}>Home</button>
           )}
         </div>
 
