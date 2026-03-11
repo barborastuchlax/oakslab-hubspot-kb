@@ -95,42 +95,79 @@ function CopyButton({ text }) {
 }
 
 // --- Flying unicorn easter egg ---
+const FLIGHT_PATHS = [
+  // bottom-left to top-right
+  { startX: -0.05, startY: 0.85, endX: 1.1, endY: -0.1, peakY: -0.4, flip: false },
+  // bottom-right to top-left
+  { startX: 1.05, startY: 0.85, endX: -0.1, endY: -0.1, peakY: -0.4, flip: true },
+  // top-left to bottom-right (dive)
+  { startX: -0.05, startY: 0.1, endX: 1.1, endY: 0.15, peakY: -0.3, flip: false },
+  // mid-left, big arc
+  { startX: -0.05, startY: 0.5, endX: 1.1, endY: 0.2, peakY: -0.5, flip: false },
+  // bottom-center upward
+  { startX: 0.2, startY: 1.05, endX: 0.9, endY: -0.1, peakY: -0.4, flip: false },
+];
+
+function getFlightPos(t, path, w, h) {
+  const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  const x = (path.startX + (path.endX - path.startX) * ease) * w;
+  const baseY = path.startY + (path.endY - path.startY) * ease;
+  const arc = path.peakY * Math.sin(ease * Math.PI);
+  const y = (baseY + arc) * h;
+  return { x, y };
+}
+
 function FlyingUnicorn({ onDone }) {
+  const [pos, setPos] = useState({ x: -100, y: -100 });
   const [trail, setTrail] = useState([]);
-  const frameRef = useRef(null);
+  const [opacity, setOpacity] = useState(0);
   const startTime = useRef(Date.now());
+  const path = useRef(FLIGHT_PATHS[Math.floor(Math.random() * FLIGHT_PATHS.length)]);
+  const trailCounter = useRef(0);
 
   useEffect(() => {
-    const timer = setTimeout(onDone, 4500);
+    const duration = 4000;
     let animId;
-    function addTrail() {
-      const elapsed = (Date.now() - startTime.current) / 4000;
-      if (elapsed > 1) return;
-      const t = elapsed;
-      const left = -60 + t * (window.innerWidth + 120);
-      const top = window.innerHeight * (0.8 - t * 0.5 * Math.sin(t * Math.PI));
-      setTrail(prev => [...prev.slice(-30), { id: Date.now(), left, top }]);
-      animId = requestAnimationFrame(addTrail);
+    function tick() {
+      const t = Math.min((Date.now() - startTime.current) / duration, 1);
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const { x, y } = getFlightPos(t, path.current, w, h);
+      setPos({ x, y });
+      // fade in/out
+      const o = t < 0.08 ? t / 0.08 : t > 0.9 ? (1 - t) / 0.1 : 1;
+      setOpacity(o);
+      trailCounter.current++;
+      if (trailCounter.current % 2 === 0) {
+        setTrail(prev => [...prev.slice(-40), { id: trailCounter.current, x, y }]);
+      }
+      if (t < 1) { animId = requestAnimationFrame(tick); }
+      else { setTimeout(onDone, 300); }
     }
-    animId = requestAnimationFrame(addTrail);
-    return () => { clearTimeout(timer); cancelAnimationFrame(animId); };
+    animId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animId);
   }, [onDone]);
+
+  const flip = path.current.flip;
 
   return (
     <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", zIndex: 100, overflow: "hidden" }}>
       {trail.map((p, i) => (
         <div key={p.id} style={{
-          position: "absolute", left: p.left, top: p.top,
+          position: "absolute", left: p.x - 4, top: p.y - 4,
           width: "8px", height: "8px", borderRadius: "50%",
-          background: `hsl(${(i * 12) % 360}, 90%, 60%)`,
-          opacity: 0.7 - (i / trail.length) * 0.5,
-          transform: `scale(${0.5 + (i / trail.length) * 0.8})`,
+          background: `hsl(${(i * 9) % 360}, 90%, 60%)`,
+          opacity: Math.max(0, 0.7 * (i / trail.length)),
+          transform: `scale(${0.3 + (i / trail.length) * 0.9})`,
           filter: "blur(1px)",
         }} />
       ))}
-      <div style={{ position: "absolute", animation: "unicornFly 4s ease-in-out forwards", fontSize: "48px" }}>
-        🦄
-      </div>
+      <div style={{
+        position: "absolute", left: pos.x - 24, top: pos.y - 24,
+        fontSize: "48px", opacity,
+        transform: flip ? "scaleX(-1)" : "none",
+        transition: "opacity 0.1s",
+      }}>🦄</div>
     </div>
   );
 }
@@ -518,13 +555,6 @@ export default function App() {
       <style>{`
         @keyframes pulse { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        @keyframes unicornFly {
-          0% { top: 80%; left: -60px; transform: rotate(-10deg); opacity: 0; }
-          10% { opacity: 1; }
-          50% { top: 30%; left: 50%; transform: rotate(5deg); }
-          90% { opacity: 1; }
-          100% { top: -60px; left: 110%; transform: rotate(-15deg); opacity: 0; }
-        }
       `}</style>
     </div>
   );
