@@ -226,6 +226,28 @@ function LoadingIndicator() {
   );
 }
 
+// --- Slack ask button ---
+const BARBORA_SLACK_ID = "U0AC9AN56SZ";
+
+function AskBarboraButton({ question }) {
+  const slackUrl = `https://slack.com/app_redirect?channel=${BARBORA_SLACK_ID}&text=${encodeURIComponent(question)}`;
+  return (
+    <a href={slackUrl} target="_blank" rel="noopener noreferrer"
+      style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "#4A154B", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 16px", fontSize: "13px", fontWeight: 600, fontFamily: "inherit", cursor: "pointer", textDecoration: "none", marginTop: "12px", transition: "background 0.15s" }}
+      onMouseEnter={e => e.currentTarget.style.background = "#611f69"}
+      onMouseLeave={e => e.currentTarget.style.background = "#4A154B"}>
+      <svg width="16" height="16" viewBox="0 0 123 123" fill="none"><path d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9zm6.5 0c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z" fill="#E01E5A"/><path d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2zm0 6.5c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 58.1 0 52.3 0 45.2s5.8-12.9 12.9-12.9h32.3z" fill="#36C5F0"/><path d="M97.2 45.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97.2V45.2zm-6.5 0c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V12.9C64.9 5.8 70.7 0 77.8 0s12.9 5.8 12.9 12.9v32.3z" fill="#2EB67D"/><path d="M77.8 97.2c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97.2h12.9zm0-6.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.8z" fill="#ECB22E"/></svg>
+      Message Barbora on Slack
+    </a>
+  );
+}
+
+function parseAskBarbora(content) {
+  const hasMarker = content.includes("<<ASK_BARBORA>>");
+  const cleanContent = content.replace(/\s*<<ASK_BARBORA>>\s*/g, "").trim();
+  return { hasMarker, cleanContent };
+}
+
 // --- Copy button ---
 function CopyButton({ text }) {
   const [copied, setCopied] = useState(false);
@@ -814,19 +836,24 @@ export default function App() {
                       <div style={{ display: "flex", justifyContent: "flex-end" }}>
                         <div style={{ background: "#111110", color: "#f5f4f0", borderRadius: "16px 16px 4px 16px", padding: "12px 18px", maxWidth: "70%", fontSize: "14px", lineHeight: 1.6 }}>{m.content}</div>
                       </div>
-                    ) : (
+                    ) : (() => {
+                      const { hasMarker, cleanContent } = parseAskBarbora(m.content);
+                      const userQuestion = i > 0 && messages[i - 1]?.role === "user" ? messages[i - 1].content : "";
+                      return (
                       <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
                         <div style={{ width: "28px", height: "28px", background: "#111110", borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                           <span style={{ color: "#f5f4f0", fontSize: "10px", fontWeight: 700, letterSpacing: "-0.02em" }}>OL</span>
                         </div>
                         <div style={{ flex: 1 }}>
                           <div style={{ background: "#fff", border: "1px solid #e8e6e0", borderRadius: "4px 16px 16px 16px", padding: "16px 20px", lineHeight: 1.7, color: "#222" }}>
-                            {renderMarkdown(m.content)}
+                            {renderMarkdown(cleanContent)}
                           </div>
-                          <CopyButton text={m.content} />
+                          {hasMarker && <AskBarboraButton question={userQuestion} />}
+                          <CopyButton text={cleanContent} />
                         </div>
                       </div>
-                    )}
+                      );
+                    })()}
                   </div>
                 ))}
                 {/* Streaming message */}
