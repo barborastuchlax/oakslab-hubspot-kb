@@ -1,12 +1,22 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 
 const SUGGESTIONS = [
-  "What do I do when a new MQL comes in?",
-  "How do I import contacts from Clay?",
-  "When should I create a deal?",
-  "What's the difference between Nurture and Closed Lost?",
-  "How do I manually add a new contact?",
-  "I've stopped receiving workflow notifications — what should I check?",
+  { label: "Processes", items: [
+    "What do I do when a new MQL comes in?",
+    "How do I import contacts from Clay?",
+  ]},
+  { label: "Pipeline", items: [
+    "When should I create a deal?",
+    "What's the difference between Nurture and Closed Lost?",
+  ]},
+  { label: "Setup & Admin", items: [
+    "How do I create a filtered view?",
+    "How do I merge duplicate contacts?",
+  ]},
+  { label: "Quick Reference", items: [
+    "What are the lifecycle stages?",
+    "What workflows are currently active?",
+  ]},
 ];
 
 const LOADING_VERBS = [
@@ -486,12 +496,17 @@ export default function App() {
               <div style={{ paddingTop: "60px" }}>
                 <p style={{ fontSize: "28px", fontWeight: 700, color: "#111110", letterSpacing: "-0.03em", marginBottom: "8px" }}>What do you need to do?</p>
                 <p style={{ color: "#888", marginBottom: "40px", fontSize: "15px" }}>Ask anything about HubSpot processes, workflows, or pipeline.</p>
-                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "10px" }}>
-                  {SUGGESTIONS.map((s, i) => (
-                    <button key={i} onClick={() => send(s)} style={{ background: "#fff", border: "1px solid #e0ded8", borderRadius: "10px", padding: "14px 16px", textAlign: "left", cursor: "pointer", fontSize: "13px", color: "#444", lineHeight: 1.5, transition: "border-color 0.15s", fontFamily: "inherit" }}
-                      onMouseEnter={e => e.target.style.borderColor = "#111110"} onMouseLeave={e => e.target.style.borderColor = "#e0ded8"}>{s}</button>
-                  ))}
-                </div>
+                {SUGGESTIONS.map((cat, ci) => (
+                  <div key={ci} style={{ marginBottom: "20px" }}>
+                    <p style={{ fontSize: "11px", fontWeight: 600, color: "#999", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>{cat.label}</p>
+                    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "10px" }}>
+                      {cat.items.map((s, i) => (
+                        <button key={i} onClick={() => send(s)} style={{ background: "#fff", border: "1px solid #e0ded8", borderRadius: "10px", padding: "14px 16px", textAlign: "left", cursor: "pointer", fontSize: "13px", color: "#444", lineHeight: 1.5, transition: "border-color 0.15s", fontFamily: "inherit" }}
+                          onMouseEnter={e => e.target.style.borderColor = "#111110"} onMouseLeave={e => e.target.style.borderColor = "#e0ded8"}>{s}</button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <>
