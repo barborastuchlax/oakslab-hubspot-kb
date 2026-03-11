@@ -28,7 +28,7 @@ const SUGGESTIONS = [
 ];
 
 const DOCS = [
-  { title: "Lifecycle Stages", icon: "\u2B24", viz: "lifecycle", content: `### Inbound Track
+  { title: "Lifecycle Stages", icon: "\u2B24", viz: "lifecycle", track: "both", content: `### Inbound Track
 - Lead: Inbound form submission (non-Talk to Sales). Assigned automatically via workflow.
 - MQL: Talk to Sales form submission or direct meeting booking with Josh. Assigned automatically.
 - SQL: Josh reviewed, accepted, call scheduled. Pre-qualified before first call. Manual.
@@ -46,7 +46,7 @@ const DOCS = [
 ### Key differences
 - Inbound SQL: before first call (Josh pre-qualifies). Outbound SQL: after first call (Sean confirms fit).
 - Inbound deal created after Josh's first call. Outbound deal created after second conversation with Sean.` },
-  { title: "Deal Pipeline", icon: "\u25B7", viz: "pipeline", content: `- Qualification: Tier, Company Type, Industry, Channel, Deal Source
+  { title: "Deal Pipeline", icon: "\u25B7", viz: "pipeline", track: "both", content: `- Qualification: Tier, Company Type, Industry, Channel, Deal Source
 - Discovery/Scoping: Tier, Project Budget, Close Date, How they heard about us?, Deal scored and tier updated?, Amount
 - Proposal: Close Date, Project Budget
 - Negotiation: none (intentional)
@@ -60,7 +60,7 @@ Nurture Reason options: Budget, Internal priorities shifted, Market conditions, 
 Deals enter at Qualification by default, or Discovery if Jake is skipped. A deal is only created when a contact reaches Opportunity stage.
 
 Nurture is NOT a dead end — automated follow-ups at 2, 4, 6 months. Auto-closes to Closed Lost after 6 months with no action.` },
-  { title: "Workflows", icon: "\u21BB", content: `- WF-01: New inbound contact sets Lead based on source. Excludes MQL+. Excludes Talk to Sales form.
+  { title: "Workflows", icon: "\u21BB", track: "both", content: `- WF-01: New inbound contact sets Lead based on source. Excludes MQL+. Excludes Talk to Sales form.
 - WF-02: Talk to Sales form OR Josh meeting booking sets MQL, assigns to Josh, creates task for Barbora.
 - WF-03: Other inbound forms (about form, newsletter footer) sets Lead, creates task for Barbora. No owner assigned.
 - WF-04: Talk to Sales form OR Josh meeting sends Slack to Josh, creates research task for Josh.
@@ -70,7 +70,18 @@ Nurture is NOT a dead end — automated follow-ups at 2, 4, 6 months. Auto-close
 
 ### Inbound forms note
 All forms are Webflow forms (not native HubSpot). Form mapping via native Webflow-HubSpot integration. Submissions sent via Zapier. They show as non-HubSpot forms in HubSpot — this is expected. If a form stops triggering: check Zapier zap and Webflow-HubSpot integration first.` },
-  { title: "How-Tos", icon: "\u2713", content: `### Manually add a contact
+  { title: "How-Tos: Inbound", icon: "\u2713", track: "inbound", content: `### Review a new lead (Barbora)
+1. Open contact \u2014 check who they are, what company, does it fit ICP?
+2. If worth passing to Josh: upgrade to MQL, assign to Josh, create follow-up task.
+3. If not worth pursuing: leave as Lead, add a note, close the task.
+
+### Handle a new MQL (Josh)
+1. Review the contact \u2014 does their company fit ICP?
+2. Score: set Lead Quality Tier (Tier 1 = perfect / Tier 2 = decent / Tier 3 = bad fit / Not a fit)
+3. If not a fit: set Tier, make a note. No deal.
+4. If worth pursuing: confirm call, update to SQL.
+5. After call \u2014 fit confirmed: update to Opportunity, create deal.` },
+  { title: "How-Tos: Outbound", icon: "\u2713", track: "outbound", content: `### Manually add a contact
 1. Always find or create the company first.
 2. Search HubSpot for the company. If it doesn't exist, create it: Company Name, Industry, Country/Region, City, LinkedIn.
 3. Create the contact FROM the company record (ensures auto-association).
@@ -84,21 +95,8 @@ Two separate imports — companies first, then contacts. Companies: Go to Contac
 - Empty to Lead: genuine trigger signal exists
 - Lead to MQL: responded positively, call booked
 - MQL to SQL: first call with Sean done, fit + budget confirmed
-- SQL to Opportunity: second conversation, clear intent, create deal now
-
-### Review a new lead (Barbora)
-1. Open contact \u2014 check who they are, what company, does it fit ICP?
-2. If worth passing to Josh: upgrade to MQL, assign to Josh, create follow-up task.
-3. If not worth pursuing: leave as Lead, add a note, close the task.
-
-### Handle a new MQL (Josh)
-1. Review the contact \u2014 does their company fit ICP?
-2. Score: set Lead Quality Tier (Tier 1 = perfect / Tier 2 = decent / Tier 3 = bad fit / Not a fit)
-3. If not a fit: set Tier, make a note. No deal.
-4. If worth pursuing: confirm call, update to SQL.
-5. After call \u2014 fit confirmed: update to Opportunity, create deal.
-
-### Create a deal
+- SQL to Opportunity: second conversation, clear intent, create deal now` },
+  { title: "How-Tos: Deals", icon: "\u2713", track: "both", content: `### Create a deal
 1. Open contact, set Lifecycle Stage to Opportunity
 2. Deals panel, click + Add
 3. Name = company name only (e.g. Acme)
@@ -112,7 +110,7 @@ Use board view. Before moving: Discovery (intro call done), Proposal (requiremen
 ### Nurture vs Closed Lost
 **Nurture:** genuine potential within 6 months. Fill Nurture Reason. Reminders at 2, 4, 6 months. Auto-closes after 6 months.
 **Closed Lost:** no realistic prospect within 6 months. Fill Loss reason. After 6 months: email + task to check back in.` },
-  { title: "FAQ", icon: "?", content: `### How do I create a filtered view?
+  { title: "FAQ", icon: "?", track: "both", content: `### How do I create a filtered view?
 Go to Contacts (or Companies/Deals) > click "All filters" > add criteria > click "Save view". Name it and choose whether to share.
 
 ### How do I create a report?
@@ -135,7 +133,7 @@ Open one record > Actions > Merge. Search for the duplicate, review values to ke
 
 ### How do I reassign a contact owner?
 Open contact > find "Contact owner" in sidebar > select new owner. Bulk: select multiple in list view > click "Assign".` },
-  { title: "General Tips", icon: "\u2605", content: `- **Activity feed**: Check daily (bell icon) for task reminders, form submissions, and email replies.
+  { title: "General Tips", icon: "\u2605", track: "both", content: `- **Activity feed**: Check daily (bell icon) for task reminders, form submissions, and email replies.
 - **Notes**: Always log notes after calls or meetings \u2014 keeps the team aligned.
 - **Tasks**: Use HubSpot tasks instead of your own to-do list for CRM follow-ups.
 - **Board view vs. list view**: Board view for deals (drag and drop), list view for contacts/companies (bulk actions).
@@ -587,6 +585,7 @@ export default function App() {
   const [authError, setAuthError] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [homeTab, setHomeTab] = useState("ask");
+  const [browseFilter, setBrowseFilter] = useState("all");
   const [isMobile, setIsMobile] = useState(() => typeof window !== "undefined" && window.innerWidth <= 768);
   const [showUnicorn, setShowUnicorn] = useState(false);
   const unicornTimer = useRef(null);
@@ -821,11 +820,21 @@ export default function App() {
                     ))}
                   </>
                 ) : (
-                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "10px" }}>
-                    {DOCS.map((doc, di) => (
-                      <DocSection key={di} title={doc.title} content={doc.content} icon={doc.icon} viz={doc.viz} isMobile={isMobile} />
-                    ))}
-                  </div>
+                  <>
+                    <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
+                      {[{ key: "all", label: "All" }, { key: "inbound", label: "Inbound" }, { key: "outbound", label: "Outbound" }].map((f) => (
+                        <button key={f.key} onClick={() => setBrowseFilter(f.key)}
+                          style={{ background: browseFilter === f.key ? "#111110" : "#fff", color: browseFilter === f.key ? "#f5f4f0" : "#555", border: "1px solid", borderColor: browseFilter === f.key ? "#111110" : "#e0ded8", borderRadius: "20px", padding: "6px 16px", fontSize: "12px", fontWeight: 600, cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s" }}
+                          onMouseEnter={e => { if (browseFilter !== f.key) e.currentTarget.style.borderColor = "#111110"; }}
+                          onMouseLeave={e => { if (browseFilter !== f.key) e.currentTarget.style.borderColor = "#e0ded8"; }}>{f.label}</button>
+                      ))}
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "10px" }}>
+                      {DOCS.filter(doc => browseFilter === "all" || doc.track === "both" || doc.track === browseFilter).map((doc, di) => (
+                        <DocSection key={di} title={doc.title} content={doc.content} icon={doc.icon} viz={doc.viz} isMobile={isMobile} />
+                      ))}
+                    </div>
+                  </>
                 )}
               </div>
             ) : (
