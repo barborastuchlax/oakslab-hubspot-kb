@@ -17,6 +17,14 @@ const SUGGESTIONS = [
     "What are the lifecycle stages?",
     "What workflows are currently active?",
   ]},
+  { label: "Troubleshooting", items: [
+    "A form stopped triggering — what do I check?",
+    "I have duplicate contacts, how do I fix them?",
+  ]},
+  { label: "Reporting", items: [
+    "How do I create a deal report by pipeline stage?",
+    "How do I track conversion rates across lifecycle stages?",
+  ]},
 ];
 
 const DOCS = [
@@ -133,6 +141,23 @@ Open contact > find "Contact owner" in sidebar > select new owner. Bulk: select 
 - **Board view vs. list view**: Board view for deals (drag and drop), list view for contacts/companies (bulk actions).
 - **Keyboard shortcuts**: Press \`G\` then \`C\` for contacts, \`G\` then \`D\` for deals. Press \`?\` to see all shortcuts.` },
 ];
+
+const CHANGELOG_ID = "2026-03-11";
+const CHANGELOG_TEXT = "Nurture auto-close changed to 6 months. New Troubleshooting & Reporting suggestions added.";
+
+function getRecentQuestions(chats, max = 4) {
+  const questions = [];
+  const sorted = [...chats].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+  for (const chat of sorted) {
+    for (const m of chat.messages) {
+      if (m.role === "user" && !questions.includes(m.content)) {
+        questions.push(m.content);
+        if (questions.length >= max) return questions;
+      }
+    }
+  }
+  return questions;
+}
 
 const LOADING_VERBS = [
   "Flibbertigibbeting", "Skedaddling", "Bamboozling", "Shenaniganizing", "Gallivanting",
@@ -546,6 +571,7 @@ export default function App() {
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
 
+  const [changelogDismissed, setChangelogDismissed] = useState(() => localStorage.getItem("changelog_dismissed") === CHANGELOG_ID);
   const activeChat = chats.find(c => c.id === activeChatId);
   const messages = activeChat?.messages || [];
 
@@ -600,6 +626,13 @@ export default function App() {
     setActiveChatId(null);
     setAuthError(false);
   }
+
+  function dismissChangelog() {
+    localStorage.setItem("changelog_dismissed", CHANGELOG_ID);
+    setChangelogDismissed(true);
+  }
+
+  const recentQuestions = getRecentQuestions(chats);
 
   async function send(text) {
     const q = text || input.trim();
@@ -718,8 +751,32 @@ export default function App() {
           <div style={{ maxWidth: "760px", margin: "0 auto", padding: "0 24px" }}>
             {empty ? (
               <div style={{ paddingTop: "60px" }}>
+                {/* What's new banner */}
+                {!changelogDismissed && (
+                  <div style={{ background: "#fffbeb", border: "1px solid #f5d880", borderRadius: "10px", padding: "12px 16px", marginBottom: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1, minWidth: 0 }}>
+                      <span style={{ fontSize: "11px", fontWeight: 700, color: "#92700c", textTransform: "uppercase", letterSpacing: "0.04em", flexShrink: 0 }}>What's new</span>
+                      <span style={{ fontSize: "13px", color: "#6b5308" }}>{CHANGELOG_TEXT}</span>
+                    </div>
+                    <button onClick={dismissChangelog} style={{ background: "none", border: "none", color: "#92700c", cursor: "pointer", fontSize: "16px", padding: "2px 6px", flexShrink: 0, lineHeight: 1 }}
+                      onMouseEnter={e => e.target.style.color = "#6b5308"} onMouseLeave={e => e.target.style.color = "#92700c"}>×</button>
+                  </div>
+                )}
+
                 <p style={{ fontSize: "28px", fontWeight: 700, color: "#111110", letterSpacing: "-0.03em", marginBottom: "8px" }}>What do you need to do?</p>
                 <p style={{ color: "#666", marginBottom: "24px", fontSize: "15px" }}>These are just suggestions — ask anything about HubSpot.</p>
+
+                {/* Cheat sheet */}
+                <div style={{ background: "#fff", border: "1px solid #e0ded8", borderRadius: "10px", padding: "16px 20px", marginBottom: "24px" }}>
+                  <p style={{ fontSize: "11px", fontWeight: 700, color: "#777", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "10px" }}>Quick cheat sheet</p>
+                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "8px 24px", fontSize: "13px", color: "#444", lineHeight: 1.6 }}>
+                    <div><strong style={{ color: "#111" }}>Stages:</strong> Lead → MQL → SQL → Opportunity → Customer</div>
+                    <div><strong style={{ color: "#111" }}>Deal created:</strong> only at Opportunity stage</div>
+                    <div><strong style={{ color: "#111" }}>Required on close:</strong> Loss Reason (Lost) / Nurture Reason (Nurture)</div>
+                    <div><strong style={{ color: "#111" }}>Nurture auto-close:</strong> 6 months with no action</div>
+                  </div>
+                </div>
+
                 <div style={{ display: "flex", gap: "0", marginBottom: "24px", borderBottom: "1px solid #e0ded8" }}>
                   {["Ask", "Browse"].map((tab) => (
                     <button key={tab} onClick={() => setHomeTab(tab.toLowerCase())}
@@ -728,6 +785,18 @@ export default function App() {
                 </div>
                 {homeTab === "ask" ? (
                   <>
+                    {/* Recently asked */}
+                    {recentQuestions.length > 0 && (
+                      <div style={{ marginBottom: "20px" }}>
+                        <p style={{ fontSize: "11px", fontWeight: 600, color: "#777", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>Recently asked</p>
+                        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "10px" }}>
+                          {recentQuestions.map((q, i) => (
+                            <button key={i} onClick={() => send(q)} style={{ background: "#f9f8f5", border: "1px solid #e0ded8", borderRadius: "10px", padding: "14px 16px", textAlign: "left", cursor: "pointer", fontSize: "13px", color: "#666", lineHeight: 1.5, transition: "border-color 0.15s", fontFamily: "inherit", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+                              onMouseEnter={e => e.target.style.borderColor = "#111110"} onMouseLeave={e => e.target.style.borderColor = "#e0ded8"}>{q}</button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     {SUGGESTIONS.map((cat, ci) => (
                       <div key={ci} style={{ marginBottom: "20px" }}>
                         <p style={{ fontSize: "11px", fontWeight: 600, color: "#777", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>{cat.label}</p>
