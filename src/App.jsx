@@ -766,17 +766,6 @@ export default function App() {
                 <p style={{ fontSize: "28px", fontWeight: 700, color: "#111110", letterSpacing: "-0.03em", marginBottom: "8px" }}>What do you need to do?</p>
                 <p style={{ color: "#666", marginBottom: "24px", fontSize: "15px" }}>These are just suggestions — ask anything about HubSpot.</p>
 
-                {/* Cheat sheet */}
-                <div style={{ background: "#fff", border: "1px solid #e0ded8", borderRadius: "10px", padding: "16px 20px", marginBottom: "24px" }}>
-                  <p style={{ fontSize: "11px", fontWeight: 700, color: "#777", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "10px" }}>Quick cheat sheet</p>
-                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "8px 24px", fontSize: "13px", color: "#444", lineHeight: 1.6 }}>
-                    <div><strong style={{ color: "#111" }}>Stages:</strong> Lead → MQL → SQL → Opportunity → Customer</div>
-                    <div><strong style={{ color: "#111" }}>Deal created:</strong> only at Opportunity stage</div>
-                    <div><strong style={{ color: "#111" }}>Required on close:</strong> Loss Reason (Lost) / Nurture Reason (Nurture)</div>
-                    <div><strong style={{ color: "#111" }}>Nurture auto-close:</strong> 6 months with no action</div>
-                  </div>
-                </div>
-
                 <div style={{ display: "flex", gap: "0", marginBottom: "24px", borderBottom: "1px solid #e0ded8" }}>
                   {["Ask", "Browse"].map((tab) => (
                     <button key={tab} onClick={() => setHomeTab(tab.toLowerCase())}
