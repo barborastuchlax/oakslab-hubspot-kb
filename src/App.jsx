@@ -363,16 +363,16 @@ function LifecycleViz() {
         <div key={track.label} style={{ marginBottom: "10px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
             <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: track.color, flexShrink: 0 }} />
-            <span style={{ fontSize: "11px", fontWeight: 600, color: "#666", textTransform: "uppercase", letterSpacing: "0.04em" }}>{track.label}</span>
+            <span style={{ fontSize: "11px", fontWeight: 600, color: "#555", textTransform: "uppercase", letterSpacing: "0.04em" }}>{track.label}</span>
           </div>
           <div style={{ display: "flex", gap: "2px" }}>
             {track.items.map((desc, i) => (
-              <div key={i} style={{ flex: 1, fontSize: "10px", color: "#888", lineHeight: 1.3, padding: "4px 4px", borderLeft: i === 0 ? "none" : "1px solid #e8e6e0", textAlign: "center" }}>{desc}</div>
+              <div key={i} style={{ flex: 1, fontSize: "10px", color: "#666", lineHeight: 1.3, padding: "4px 4px", borderLeft: i === 0 ? "none" : "1px solid #e8e6e0", textAlign: "center" }}>{desc}</div>
             ))}
           </div>
         </div>
       ))}
-      <div style={{ fontSize: "10px", color: "#aaa", marginTop: "8px", fontStyle: "italic" }}>Key: Inbound SQL is before first call (Josh pre-qualifies) / Outbound SQL is after first call (Sean confirms)</div>
+      <div style={{ fontSize: "10px", color: "#777", marginTop: "8px", fontStyle: "italic" }}>Key: Inbound SQL is before first call (Josh pre-qualifies) / Outbound SQL is after first call (Sean confirms)</div>
     </div>
   );
 }
@@ -391,17 +391,17 @@ function PipelineViz() {
     <div style={{ padding: "16px 0 8px" }}>
       <div style={{ display: "flex", flexDirection: "column", gap: "3px", alignItems: "center" }}>
         {stages.map((s, i) => (
-          <div key={i} style={{ width: `${s.w}%`, background: i === stages.length - 1 ? "#111110" : "#f0efeb", borderRadius: "6px", padding: "8px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", transition: "background 0.15s" }}>
+          <div key={i} style={{ width: `${s.w}%`, background: i === stages.length - 1 ? "#111110" : "#e8e6e0", borderRadius: "6px", padding: "8px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", transition: "background 0.15s" }}>
             <span style={{ fontSize: "12px", fontWeight: 600, color: i === stages.length - 1 ? "#fff" : "#333" }}>{s.name}</span>
-            <span style={{ fontSize: "10px", color: i === stages.length - 1 ? "#999" : "#999" }}>{s.fields}</span>
+            <span style={{ fontSize: "10px", color: i === stages.length - 1 ? "#aaa" : "#666" }}>{s.fields}</span>
           </div>
         ))}
       </div>
       <div style={{ display: "flex", justifyContent: "center", gap: "16px", marginTop: "12px" }}>
         {[{ name: "Nurture", desc: "Auto follow-up 2/4/6mo", color: "#f59e0b" }, { name: "Closed Lost", desc: "Check-in after 6mo", color: "#ef4444" }].map((s) => (
-          <div key={s.name} style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#888" }}>
+          <div key={s.name} style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#666" }}>
             <div style={{ width: "8px", height: "8px", borderRadius: "2px", background: s.color }} />
-            <span><strong style={{ color: "#555" }}>{s.name}</strong> \u2014 {s.desc}</span>
+            <span><strong style={{ color: "#444" }}>{s.name}</strong> \u2014 {s.desc}</span>
           </div>
         ))}
       </div>
@@ -420,7 +420,7 @@ function DocSection({ title, content, icon, viz, isMobile }) {
       onMouseLeave={e => { if (!open) e.currentTarget.style.borderColor = open ? "#ccc" : "#e0ded8"; }}>
       <button onClick={() => { setOpen(!open); if (open) setShowDetails(false); }}
         style={{ width: "100%", background: "none", border: "none", padding: "14px 16px", textAlign: "left", cursor: "pointer", fontSize: "13px", color: open ? "#111110" : "#444", fontWeight: open ? 600 : 400, fontFamily: "inherit", display: "flex", alignItems: "center", gap: "10px" }}>
-        <span style={{ color: open ? "#111110" : "#bbb", fontSize: "12px", transition: "transform 0.15s", transform: open ? "rotate(90deg)" : "none", flexShrink: 0 }}>&#9658;</span>
+        <span style={{ color: open ? "#111110" : "#888", fontSize: "12px", transition: "transform 0.15s", transform: open ? "rotate(90deg)" : "none", flexShrink: 0 }}>&#9658;</span>
         {title}
       </button>
       {open && (
@@ -433,7 +433,7 @@ function DocSection({ title, content, icon, viz, isMobile }) {
           )}
           {hasViz ? (
             <>
-              <button onClick={() => setShowDetails(!showDetails)} style={{ background: "none", border: "none", fontSize: "11px", color: "#999", cursor: "pointer", fontFamily: "inherit", padding: "4px 0", textTransform: "uppercase", letterSpacing: "0.04em", fontWeight: 600 }}>
+              <button onClick={() => setShowDetails(!showDetails)} style={{ background: "none", border: "none", fontSize: "11px", color: "#777", cursor: "pointer", fontFamily: "inherit", padding: "4px 0", textTransform: "uppercase", letterSpacing: "0.04em", fontWeight: 600 }}>
                 {showDetails ? "\u25BE Hide details" : "\u25B8 Show details"}
               </button>
               {showDetails && (
@@ -719,18 +719,18 @@ export default function App() {
             {empty ? (
               <div style={{ paddingTop: "60px" }}>
                 <p style={{ fontSize: "28px", fontWeight: 700, color: "#111110", letterSpacing: "-0.03em", marginBottom: "8px" }}>What do you need to do?</p>
-                <p style={{ color: "#888", marginBottom: "24px", fontSize: "15px" }}>Ask anything about HubSpot processes, workflows, or pipeline.</p>
+                <p style={{ color: "#666", marginBottom: "24px", fontSize: "15px" }}>These are just suggestions — ask anything about HubSpot.</p>
                 <div style={{ display: "flex", gap: "0", marginBottom: "24px", borderBottom: "1px solid #e0ded8" }}>
                   {["Ask", "Browse"].map((tab) => (
                     <button key={tab} onClick={() => setHomeTab(tab.toLowerCase())}
-                      style={{ background: "none", border: "none", borderBottom: homeTab === tab.toLowerCase() ? "2px solid #111110" : "2px solid transparent", padding: "8px 20px", fontSize: "13px", fontWeight: homeTab === tab.toLowerCase() ? 600 : 400, color: homeTab === tab.toLowerCase() ? "#111110" : "#999", cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s", marginBottom: "-1px" }}>{tab}</button>
+                      style={{ background: "none", border: "none", borderBottom: homeTab === tab.toLowerCase() ? "2px solid #111110" : "2px solid transparent", padding: "8px 20px", fontSize: "13px", fontWeight: homeTab === tab.toLowerCase() ? 600 : 400, color: homeTab === tab.toLowerCase() ? "#111110" : "#777", cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s", marginBottom: "-1px" }}>{tab}</button>
                   ))}
                 </div>
                 {homeTab === "ask" ? (
                   <>
                     {SUGGESTIONS.map((cat, ci) => (
                       <div key={ci} style={{ marginBottom: "20px" }}>
-                        <p style={{ fontSize: "11px", fontWeight: 600, color: "#999", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>{cat.label}</p>
+                        <p style={{ fontSize: "11px", fontWeight: 600, color: "#777", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>{cat.label}</p>
                         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "10px" }}>
                           {cat.items.map((s, i) => (
                             <button key={i} onClick={() => send(s)} style={{ background: "#fff", border: "1px solid #e0ded8", borderRadius: "10px", padding: "14px 16px", textAlign: "left", cursor: "pointer", fontSize: "13px", color: "#444", lineHeight: 1.5, transition: "border-color 0.15s", fontFamily: "inherit" }}
@@ -739,7 +739,6 @@ export default function App() {
                         </div>
                       </div>
                     ))}
-                    <p style={{ color: "#bbb", fontSize: "12px", textAlign: "center", marginTop: "4px" }}>These are just suggestions — ask anything about HubSpot.</p>
                   </>
                 ) : (
                   <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "10px" }}>
