@@ -19,6 +19,121 @@ const SUGGESTIONS = [
   ]},
 ];
 
+const DOCS = [
+  { title: "Lifecycle Stages", content: `### Inbound Track
+- Lead: Inbound form submission (non-Talk to Sales). Assigned automatically via workflow.
+- MQL: Talk to Sales form submission or direct meeting booking with Josh. Assigned automatically.
+- SQL: Josh reviewed, accepted, call scheduled. Pre-qualified before first call. Manual.
+- Opportunity: Josh took first call, fit confirmed. Deal created, enters pipeline at Qualification (or Discovery if Jake skipped). Manual.
+- Customer: Associated deal marked Closed Won. Automatic.
+
+### Outbound Track
+- Empty/no stage: Contact imported, no trigger signal yet.
+- Lead: Genuine trigger exists (funding round, hiring signal, leadership change). Manual.
+- MQL: Contact responded positively to outreach, call is booked. Manual.
+- SQL: First call with Sean done, fit and budget confirmed. Manual.
+- Opportunity: Second conversation with clear intent. Deal created. Manual.
+- Customer: Associated deal marked Closed Won. Automatic.
+
+### Key differences
+- Inbound SQL: before first call (Josh pre-qualifies). Outbound SQL: after first call (Sean confirms fit).
+- Inbound deal created after Josh's first call. Outbound deal created after second conversation with Sean.` },
+  { title: "Deal Pipeline", content: `- Qualification: Tier, Company Type, Industry, Channel, Deal Source
+- Discovery/Scoping: Tier, Project Budget, Close Date, How they heard about us?, Deal scored and tier updated?, Amount
+- Proposal: Close Date, Project Budget
+- Negotiation: none (intentional)
+- Contract: none (intentional)
+- Closed Won: none (intentional)
+- Closed Lost: Loss reason (required)
+- Nurture: Nurture Reason (required)
+
+Nurture Reason options: Budget, Internal priorities shifted, Market conditions, Building stakeholder buy-in, Relationship building — not ready yet, Timing, Decision maker not engaged, Fundraising, Other.
+
+Deals enter at Qualification by default, or Discovery if Jake is skipped. A deal is only created when a contact reaches Opportunity stage.
+
+Nurture is NOT a dead end — automated follow-ups at 2, 4, 6 months. Auto-closes to Closed Lost after 6 months with no action.` },
+  { title: "Workflows", content: `- WF-01: New inbound contact sets Lead based on source. Excludes MQL+. Excludes Talk to Sales form.
+- WF-02: Talk to Sales form OR Josh meeting booking sets MQL, assigns to Josh, creates task for Barbora.
+- WF-03: Other inbound forms (about form, newsletter footer) sets Lead, creates task for Barbora. No owner assigned.
+- WF-04: Talk to Sales form OR Josh meeting sends Slack to Josh, creates research task for Josh.
+- WF-05: Outbound imports sets Lead Source Category = Outbound. Does NOT set lifecycle stage.
+- WF-06: Deal enters Nurture, emails at 2/4/6 months, auto-closes to Closed Lost after 6 months + 1 day.
+- WF-07: Deal marked Closed Lost, 183 days later sends email + creates task to check back in.
+
+### Inbound forms note
+All forms are Webflow forms (not native HubSpot). Form mapping via native Webflow-HubSpot integration. Submissions sent via Zapier. They show as non-HubSpot forms in HubSpot — this is expected. If a form stops triggering: check Zapier zap and Webflow-HubSpot integration first.` },
+  { title: "How-Tos", content: `### Manually add a contact
+1. Always find or create the company first.
+2. Search HubSpot for the company. If it doesn't exist, create it: Company Name, Industry, Country/Region, City, LinkedIn.
+3. Create the contact FROM the company record (ensures auto-association).
+4. Fill: First Name, Last Name, Email, Phone, Job Title, LinkedIn URL, Country/Region, City, Lead Source Category (Outbound), Lifecycle Stage (only if genuine trigger — otherwise leave empty), Contact Owner.
+5. Do NOT create a deal — only create deals at Opportunity stage.
+
+### Import from Clay
+Two separate imports — companies first, then contacts. Companies: Go to Contacts > Import > Single file > Companies. Contacts: Go to Contacts > Import > Single file > Contacts. Add Lead Source Category = Outbound in Clay before export. Do NOT include Lifecycle Stage or Lead Status. After both imports, spot-check 5–10 contacts and fix orphaned ones.
+
+### Move outbound contacts through stages
+- Empty to Lead: genuine trigger signal exists
+- Lead to MQL: responded positively, call booked
+- MQL to SQL: first call with Sean done, fit + budget confirmed
+- SQL to Opportunity: second conversation, clear intent, create deal now
+
+### Review a new lead (Barbora)
+1. Open contact — check who they are, what company, does it fit ICP?
+2. If worth passing to Josh: upgrade to MQL, assign to Josh, create follow-up task.
+3. If not worth pursuing: leave as Lead, add a note, close the task.
+
+### Handle a new MQL (Josh)
+1. Review the contact — does their company fit ICP?
+2. Score: set Lead Quality Tier (Tier 1 = perfect / Tier 2 = decent / Tier 3 = bad fit / Not a fit)
+3. If not a fit: set Tier, make a note. No deal.
+4. If worth pursuing: confirm call, update to SQL.
+5. After call — fit confirmed: update to Opportunity, create deal.
+
+### Create a deal
+1. Open contact, set Lifecycle Stage to Opportunity
+2. Deals panel, click + Add
+3. Name = company name only (e.g. Acme)
+4. Pipeline = New Business, Stage = Qualification (or Discovery if Jake skipped)
+5. Set Deal Type, Channel, fill required properties
+6. Sean creates outbound deals. Josh creates inbound deals.
+
+### Move a deal through the pipeline
+Use board view. Before moving: Discovery (intro call done), Proposal (requirements scoped), Negotiation (proposal sent), Contract (terms agreed), Closed Won (contract signed), Closed Lost (loss reason required), Nurture (nurture reason required). Always fill required properties and keep close date up to date.
+
+### Nurture vs Closed Lost
+**Nurture:** genuine potential within 6 months. Fill Nurture Reason. Reminders at 2, 4, 6 months. Auto-closes after 6 months.
+**Closed Lost:** no realistic prospect within 6 months. Fill Loss reason. After 6 months: email + task to check back in.` },
+  { title: "FAQ", content: `### How do I create a filtered view?
+Go to Contacts (or Companies/Deals) > click "All filters" > add criteria > click "Save view". Name it and choose whether to share.
+
+### How do I create a report?
+Go to Reporting > Reports > Create report. Choose "Single object" or "Custom report builder". Select data source, add filters, pick chart type. Save to a dashboard.
+
+### How do I set up an integration?
+Go to Settings > Integrations > Connected apps > Visit App Marketplace. Search, click "Install", follow authorization flow.
+
+### How do I export data?
+Go to the relevant object > select view/filters > click "Export". Choose CSV or XLSX and which properties to include.
+
+### How do I manage email templates?
+Go to Conversations > Templates. Click "New template". Use personalization tokens like {{contact.firstname}}.
+
+### How do I track email opens and clicks?
+Automatic for emails sent via HubSpot. For Gmail/Outlook, install the HubSpot extension. Configure in Settings > General > Email.
+
+### How do I merge duplicates?
+Open one record > Actions > Merge. Search for the duplicate, review values to keep, click Merge. Cannot be undone.
+
+### How do I reassign a contact owner?
+Open contact > find "Contact owner" in sidebar > select new owner. Bulk: select multiple in list view > click "Assign".` },
+  { title: "General Tips", content: `- **Activity feed**: Check daily (bell icon) for task reminders, form submissions, and email replies.
+- **Notes**: Always log notes after calls or meetings — keeps the team aligned.
+- **Tasks**: Use HubSpot tasks instead of your own to-do list for CRM follow-ups.
+- **Board view vs. list view**: Board view for deals (drag and drop), list view for contacts/companies (bulk actions).
+- **Keyboard shortcuts**: Press \`G\` then \`C\` for contacts, \`G\` then \`D\` for deals. Press \`?\` to see all shortcuts.` },
+];
+
 const LOADING_VERBS = [
   "Flibbertigibbeting", "Skedaddling", "Bamboozling", "Shenaniganizing", "Gallivanting",
   "Kerfuffling", "Hornswoggling", "Skulldugging", "Higgledy-piggledying", "Balderpashing",
@@ -228,6 +343,26 @@ function formatInline(text) {
     if (part.startsWith("`") && part.endsWith("`")) return <code key={i} style={{ background: "#e8e6e0", padding: "1px 5px", borderRadius: "3px", fontSize: "12px", fontFamily: "monospace" }}>{part.slice(1, -1)}</code>;
     return part;
   });
+}
+
+// --- Doc section ---
+function DocSection({ title, content }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ background: "#fff", border: "1px solid #e0ded8", borderRadius: "10px", transition: "border-color 0.15s", overflow: "hidden" }}
+      onMouseEnter={e => { if (!open) e.currentTarget.style.borderColor = "#111110"; }}
+      onMouseLeave={e => { if (!open) e.currentTarget.style.borderColor = "#e0ded8"; }}>
+      <button onClick={() => setOpen(!open)} style={{ width: "100%", background: "none", border: "none", padding: "14px 16px", textAlign: "left", cursor: "pointer", fontSize: "13px", color: "#444", fontFamily: "inherit", display: "flex", alignItems: "center", gap: "8px" }}>
+        <span style={{ color: "#999", fontSize: "11px", transition: "transform 0.15s", transform: open ? "rotate(90deg)" : "none" }}>&#9658;</span>
+        {title}
+      </button>
+      {open && (
+        <div style={{ padding: "0 16px 14px", fontSize: "13px", color: "#444", lineHeight: 1.7, borderTop: "1px solid #e8e6e0" }}>
+          {renderMarkdown(content)}
+        </div>
+      )}
+    </div>
+  );
 }
 
 // --- Login ---
@@ -495,7 +630,14 @@ export default function App() {
             {empty ? (
               <div style={{ paddingTop: "60px" }}>
                 <p style={{ fontSize: "28px", fontWeight: 700, color: "#111110", letterSpacing: "-0.03em", marginBottom: "8px" }}>What do you need to do?</p>
-                <p style={{ color: "#888", marginBottom: "40px", fontSize: "15px" }}>Ask anything about HubSpot processes, workflows, or pipeline.</p>
+                <p style={{ color: "#888", marginBottom: "32px", fontSize: "15px" }}>Ask anything about HubSpot processes, workflows, or pipeline.</p>
+                <p style={{ fontSize: "11px", fontWeight: 600, color: "#999", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "10px" }}>Browse Documentation</p>
+                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "10px", marginBottom: "32px" }}>
+                  {DOCS.map((doc, di) => (
+                    <DocSection key={di} title={doc.title} content={doc.content} />
+                  ))}
+                </div>
+                <p style={{ fontSize: "11px", fontWeight: 600, color: "#999", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "10px" }}>Quick Questions</p>
                 {SUGGESTIONS.map((cat, ci) => (
                   <div key={ci} style={{ marginBottom: "20px" }}>
                     <p style={{ fontSize: "11px", fontWeight: 600, color: "#999", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>{cat.label}</p>
