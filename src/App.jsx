@@ -96,13 +96,38 @@ function CopyButton({ text }) {
 
 // --- Flying unicorn easter egg ---
 function FlyingUnicorn({ onDone }) {
+  const [trail, setTrail] = useState([]);
+  const frameRef = useRef(null);
+  const startTime = useRef(Date.now());
+
   useEffect(() => {
-    const timer = setTimeout(onDone, 4000);
-    return () => clearTimeout(timer);
+    const timer = setTimeout(onDone, 4500);
+    let animId;
+    function addTrail() {
+      const elapsed = (Date.now() - startTime.current) / 4000;
+      if (elapsed > 1) return;
+      const t = elapsed;
+      const left = -60 + t * (window.innerWidth + 120);
+      const top = window.innerHeight * (0.8 - t * 0.5 * Math.sin(t * Math.PI));
+      setTrail(prev => [...prev.slice(-30), { id: Date.now(), left, top }]);
+      animId = requestAnimationFrame(addTrail);
+    }
+    animId = requestAnimationFrame(addTrail);
+    return () => { clearTimeout(timer); cancelAnimationFrame(animId); };
   }, [onDone]);
 
   return (
     <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", zIndex: 100, overflow: "hidden" }}>
+      {trail.map((p, i) => (
+        <div key={p.id} style={{
+          position: "absolute", left: p.left, top: p.top,
+          width: "8px", height: "8px", borderRadius: "50%",
+          background: `hsl(${(i * 12) % 360}, 90%, 60%)`,
+          opacity: 0.7 - (i / trail.length) * 0.5,
+          transform: `scale(${0.5 + (i / trail.length) * 0.8})`,
+          filter: "blur(1px)",
+        }} />
+      ))}
       <div style={{ position: "absolute", animation: "unicornFly 4s ease-in-out forwards", fontSize: "48px" }}>
         🦄
       </div>
