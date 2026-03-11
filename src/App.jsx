@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import SYSTEM_PROMPT from "../content/hubspot-kb.md?raw";
 
 const SUGGESTIONS = [
   "What do I do when a new MQL comes in?",
@@ -59,16 +58,75 @@ function formatInline(text) {
   });
 }
 
+function LoginScreen({ onLogin }) {
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (!password.trim()) return;
+    setError("");
+    onLogin(password.trim());
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100dvh", overflow: "hidden", background: "#f5f4f0", fontFamily: "'Inter', -apple-system, sans-serif", fontSize: "14px", color: "#333" }}>
+      <div style={{ background: "#111110", color: "#f5f4f0", padding: "0 32px", height: "56px", display: "flex", alignItems: "center", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <span style={{ fontWeight: 700, letterSpacing: "-0.02em", fontSize: "15px" }}>OAK'S LAB</span>
+          <span style={{ color: "#666", fontSize: "12px" }}>|</span>
+          <span style={{ color: "#c8c6be", fontSize: "13px", letterSpacing: "0.04em", textTransform: "uppercase" }}>HubSpot Knowledge Base</span>
+        </div>
+      </div>
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <form onSubmit={handleSubmit} style={{ maxWidth: "360px", width: "100%", padding: "0 24px" }}>
+          <p style={{ fontSize: "22px", fontWeight: 700, color: "#111110", letterSpacing: "-0.02em", marginBottom: "8px" }}>Sign in</p>
+          <p style={{ color: "#888", marginBottom: "24px", fontSize: "14px" }}>Enter the team password to continue.</p>
+          <input
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            placeholder="Password"
+            autoFocus
+            style={{ width: "100%", border: "1px solid #e0ded8", borderRadius: "10px", padding: "12px 16px", fontSize: "14px", fontFamily: "inherit", outline: "none", background: "#fff", color: "#111110", marginBottom: "12px" }}
+          />
+          {error && <p style={{ color: "#c0392b", fontSize: "13px", marginBottom: "12px" }}>{error}</p>}
+          <button type="submit"
+            style={{ width: "100%", background: "#111110", color: "#f5f4f0", border: "none", borderRadius: "10px", padding: "12px 20px", cursor: "pointer", fontSize: "14px", fontWeight: 600, fontFamily: "inherit" }}>
+            Continue
+          </button>
+        </form>
+      </div>
+      <style>{`* { box-sizing: border-box; margin: 0; padding: 0; }`}</style>
+    </div>
+  );
+}
+
 export default function App() {
+  const [token, setToken] = useState(() => sessionStorage.getItem("auth_token") || "");
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [authError, setAuthError] = useState(false);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  function handleLogin(password) {
+    sessionStorage.setItem("auth_token", password);
+    setToken(password);
+    setAuthError(false);
+  }
+
+  function handleLogout() {
+    sessionStorage.removeItem("auth_token");
+    setToken("");
+    setMessages([]);
+    setAuthError(false);
+  }
 
   async function send(text) {
     const q = text || input.trim();
@@ -80,9 +138,18 @@ export default function App() {
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ system: SYSTEM_PROMPT, messages: newMessages }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ messages: newMessages }),
       });
+      if (res.status === 401) {
+        setAuthError(true);
+        setMessages(messages);
+        setLoading(false);
+        return;
+      }
       const data = await res.json();
       const reply = data.content?.find(b => b.type === "text")?.text || "Sorry, I couldn't get a response.";
       setMessages([...newMessages, { role: "assistant", content: reply }]);
@@ -91,6 +158,10 @@ export default function App() {
     }
     setLoading(false);
     inputRef.current?.focus();
+  }
+
+  if (!token || authError) {
+    return <LoginScreen onLogin={handleLogin} />;
   }
 
   const empty = messages.length === 0;
@@ -104,7 +175,9 @@ export default function App() {
           <span style={{ color: "#666", fontSize: "12px" }}>|</span>
           <span style={{ color: "#c8c6be", fontSize: "13px", letterSpacing: "0.04em", textTransform: "uppercase" }}>HubSpot Knowledge Base</span>
         </div>
-        <span style={{ color: "#666", fontSize: "12px", letterSpacing: "0.06em", textTransform: "uppercase" }}>BD Team</span>
+        <button onClick={handleLogout} style={{ background: "none", border: "1px solid #444", borderRadius: "6px", color: "#888", fontSize: "11px", padding: "4px 10px", cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+          Sign out
+        </button>
       </div>
 
       {/* Messages */}
