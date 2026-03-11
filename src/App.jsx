@@ -610,42 +610,46 @@ function LoginScreen({ onLogin }) {
 
 // --- SSE stream parser ---
 async function streamChat(token, messages, onDelta, onDone, onError) {
-  const res = await fetch("/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-    body: JSON.stringify({ messages }),
-  });
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+      body: JSON.stringify({ messages }),
+    });
 
-  if (res.status === 401) { onError("auth"); return; }
-  if (!res.ok) { onError("api"); return; }
+    if (res.status === 401) { onError("auth"); return; }
+    if (!res.ok) { onError("api"); return; }
 
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-  let fullText = "";
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let fullText = "";
 
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
 
-    const lines = buffer.split("\n");
-    buffer = lines.pop() || "";
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
 
-    for (const line of lines) {
-      if (!line.startsWith("data: ")) continue;
-      const data = line.slice(6);
-      if (data === "[DONE]") continue;
-      try {
-        const parsed = JSON.parse(data);
-        if (parsed.type === "content_block_delta" && parsed.delta?.text) {
-          fullText += parsed.delta.text;
-          onDelta(fullText);
-        }
-      } catch {}
+      for (const line of lines) {
+        if (!line.startsWith("data: ")) continue;
+        const data = line.slice(6);
+        if (data === "[DONE]") continue;
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.type === "content_block_delta" && parsed.delta?.text) {
+            fullText += parsed.delta.text;
+            onDelta(fullText);
+          }
+        } catch {}
+      }
     }
+    onDone(fullText);
+  } catch {
+    onError("api");
   }
-  onDone(fullText);
 }
 
 // --- Main App ---
