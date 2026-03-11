@@ -507,6 +507,7 @@ export default function App() {
                     </div>
                   </div>
                 ))}
+                <p style={{ color: "#bbb", fontSize: "12px", textAlign: "center", marginTop: "12px" }}>These are just suggestions — ask anything about HubSpot.</p>
               </div>
             ) : (
               <>
