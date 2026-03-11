@@ -29,87 +29,158 @@ const SUGGESTIONS = [
 
 const DOCS = [
   { title: "Lifecycle Stages", icon: "\u2B24", viz: "lifecycle", track: "both", content: `### Inbound Track
-- Lead: Inbound form submission (non-Talk to Sales). Assigned automatically via workflow.
-- MQL: Talk to Sales form submission or direct meeting booking with Josh. Assigned automatically.
-- SQL: Josh reviewed, accepted, call scheduled. Pre-qualified before first call. Manual.
-- Opportunity: Josh took first call, fit confirmed. Deal created, enters pipeline at Qualification (or Discovery if Jake skipped). Manual.
-- Customer: Associated deal marked Closed Won. Automatic.
+- **Lead**: Inbound form submission (non-Talk to Sales). Assigned automatically via workflow.
+- **MQL**: Talk to Sales form submission or direct meeting booking with Josh. Assigned automatically.
+- **SQL**: Josh has reviewed the contact, accepted them as worth pursuing, and a call is scheduled. Pre-qualified before first call. Manual.
+- **Opportunity**: Josh has taken the first call, fit is confirmed. Deal created, enters pipeline at Qualification (or Discovery if Jake skipped). Manual.
+- **Customer**: Associated deal marked Closed Won. Automatic.
 
 ### Outbound Track
-- Empty/no stage: Contact imported, no trigger signal yet.
-- Lead: Genuine trigger exists (funding round, hiring signal, leadership change). Manual.
-- MQL: Contact responded positively to outreach, call is booked. Manual.
-- SQL: First call with Sean done, fit and budget confirmed. Manual.
-- Opportunity: Second conversation with clear intent. Deal created. Manual.
-- Customer: Associated deal marked Closed Won. Automatic.
+- **Empty/no stage**: Contact imported into HubSpot — no trigger signal yet.
+- **Lead**: A trigger exists that makes this company worth contacting — e.g. funding round, hiring signal, leadership change. Manual.
+- **MQL**: Contact has responded positively to outreach and a call is booked. Manual.
+- **SQL**: First call with Sean has happened. Fit and budget confirmed. Marked as SQL after this call. Manual.
+- **Opportunity**: Second conversation with clear intent to move forward, or enough info exchanged to know this is worth pursuing now. Deal created. Manual.
+- **Customer**: Associated deal marked Closed Won. Automatic.
 
 ### Key differences
-- Inbound SQL: before first call (Josh pre-qualifies). Outbound SQL: after first call (Sean confirms fit).
+- Inbound first stage: Lead (automated). Outbound first stage: Empty/no stage → Lead (manual).
+- Inbound SQL: before first call — Josh pre-qualifies. Outbound SQL: after first call — Sean confirms fit.
+- Inbound MQL trigger: form fill or meeting booked. Outbound MQL trigger: positive reply to outreach.
 - Inbound deal created after Josh's first call. Outbound deal created after second conversation with Sean.` },
-  { title: "Deal Pipeline", icon: "\u25B7", viz: "pipeline", track: "both", content: `- Qualification: Tier, Company Type, Industry, Channel, Deal Source
-- Discovery/Scoping: Tier, Project Budget, Close Date, How they heard about us?, Deal scored and tier updated?, Amount
-- Proposal: Close Date, Project Budget
-- Negotiation: none (intentional)
-- Contract: none (intentional)
-- Closed Won: none (intentional)
-- Closed Lost: Loss reason (required)
-- Nurture: Nurture Reason (required)
+  { title: "Deal Pipeline", icon: "\u25B7", viz: "pipeline", track: "both", content: `- **Qualification**: First entry point. Introductory call with Jake to assess fit. Sometimes skipped on inbound. Required: Tier, Company Type, Industry, Channel, Deal Source.
+- **Discovery/Scoping**: Deep dive on requirements, solution design, scoping. Required: Tier, Project Budget, Close Date, How they heard about us?, Deal scored and tier updated?, Amount.
+- **Proposal**: Proposal created and sent. Required: Close Date, Project Budget.
+- **Negotiation**: Discussing pricing/terms, working through objections. No required properties (intentional).
+- **Contract**: Legal review, contract signature pending. No required properties (intentional).
+- **Closed Won**: Deal signed. No required properties (intentional).
+- **Closed Lost**: Not moving forward. Required: Loss reason.
+- **Nurture**: Good fit but not ready now — 6+ month timeline. Required: Nurture Reason.
 
 Nurture Reason options: Budget, Internal priorities shifted, Market conditions, Building stakeholder buy-in, Relationship building — not ready yet, Timing, Decision maker not engaged, Fundraising, Other.
 
 Deals enter at Qualification by default, or Discovery if Jake is skipped. A deal is only created when a contact reaches Opportunity stage.
 
-Nurture is NOT a dead end — automated follow-ups at 2, 4, 6 months. Auto-closes to Closed Lost after 6 months with no action.` },
-  { title: "Workflows", icon: "\u21BB", track: "both", content: `- WF-01: New inbound contact sets Lead based on source. Excludes MQL+. Excludes Talk to Sales form.
-- WF-02: Talk to Sales form OR Josh meeting booking sets MQL, assigns to Josh, creates task for Barbora.
-- WF-03: Other inbound forms (about form, newsletter footer) sets Lead, creates task for Barbora. No owner assigned.
-- WF-04: Talk to Sales form OR Josh meeting sends Slack to Josh, creates research task for Josh.
-- WF-05: Outbound imports sets Lead Source Category = Outbound. Does NOT set lifecycle stage.
-- WF-06: Deal enters Nurture, emails at 2/4/6 months, auto-closes to Closed Lost after 6 months + 1 day.
-- WF-07: Deal marked Closed Lost, 183 days later sends email + creates task to check back in.
+Nurture is NOT a dead end — automated follow-ups at 2, 4, 6 months. Auto-closes to Closed Lost after 6 months with no action.
+
+Deals can skip Qualification and enter at Discovery in two cases: (1) inbound leads where Josh handles the first call and Jake is not needed, (2) outbound deals where enough context exists from prior calls.` },
+  { title: "Tier System", icon: "\u25C6", track: "both", content: `### ICP Tier (Company level)
+Reflects how well a company matches OAK'S LAB's ideal customer profile. Set when a company is first imported or created, reviewed at Qualification. Sean sets it on outbound import. Josh sets it when qualifying inbound.
+
+- **Tier 1 — Ideal fit**: ALL must be true: Series A–D, US-based engineering team with identifiable CTO/CPO, 10–50 engineers, confirmed openness to external engineering partners. → Prioritise immediately.
+- **Tier 2 — Strong fit, one unknown**: Most Tier 1 boxes ticked — engineering team size unclear or slightly outside sweet spot, or openness to external partners unconfirmed. → Worth pursuing, not at expense of Tier 1.
+- **Tier 3 — Partial fit, longer term**: Series A–D but team largely offshore; very small team; happy with current dev partner; stage or team size not yet right. → Deprioritise — monitor for growth.
+- **Not our ICP — Clear mismatch**: Bootstrapped with no funding path; pre-product/idea stage; consumer-facing with no enterprise angle; explicitly declined; non-US with no US engineering leadership. → Do not pursue.
+
+### Deal Tier (Deal level)
+Reflects opportunity quality — scored independently by Josh after the qualification call using the Lead Scoring Matrix. Set at or immediately after Qualification, updated at Discovery if new info changes the picture.
+
+The Deal Tier is independent from ICP Tier. A Tier 1 company can have a Tier 2 deal (decision maker not engaged, budget unclear). A Tier 2 company can have a Tier 1 deal (timing and budget both strong).` },
+  { title: "Workflows", icon: "\u21BB", track: "both", content: `### Native Automations (Settings → Lifecycle Stages → Automate)
+- Sync lifecycle stages: ON (Contact ↔ Company sync)
+- Set stage when created: OFF (handled by WF-01/WF-05 to distinguish inbound vs outbound)
+- Set stage when deal created: ON → Opportunity
+- Set stage when deal won: ON → Customer
+- Set stage when lead associated: ON → Lead
+
+### Workflows (all active as of 9 March 2026)
+- **WF-01**: New inbound contact → Lead (based on original source allowlist). Excludes MQL+, excludes Talk to Sales form.
+- **WF-02**: Talk to Sales form / Josh meeting → MQL, marketing contact, Lead Source = Inbound, assigns to Josh, task for Barbora.
+- **WF-03**: Other inbound forms (about, newsletter) → Lead, marketing contact, Lead Source = Inbound, task for Barbora.
+- **WF-04**: Talk to Sales form / Josh meeting → Slack notification to Josh + research task.
+- **WF-05**: Outbound imports (Offline Sources, not Legacy) → Lead Source Category = Outbound. Does NOT set lifecycle stage.
+- **WF-06**: Deal enters Nurture → reminders at 2/4/6 months to owner + collaborator → auto-closes to Closed Lost after 6 months + 1 day.
+- **WF-07**: Deal marked Closed Lost → 183 days later: email to owner + follow-up task (due 3 business days).
 
 ### Inbound forms note
-All forms are Webflow forms (not native HubSpot). Form mapping via native Webflow-HubSpot integration. Submissions sent via Zapier. They show as non-HubSpot forms in HubSpot — this is expected. If a form stops triggering: check Zapier zap and Webflow-HubSpot integration first.` },
+All forms are Webflow forms (not native HubSpot). Mapping via Webflow–HubSpot integration. Submissions sent via Zapier. They show as non-HubSpot forms — this is expected. If a form stops triggering: check Zapier zap and Webflow–HubSpot integration first.` },
   { title: "How-Tos: Inbound", icon: "\u2713", track: "inbound", content: `### Review a new lead (Barbora)
-1. Open contact \u2014 check who they are, what company, does it fit ICP?
-2. If worth passing to Josh: upgrade to MQL, assign to Josh, create follow-up task.
+When WF-03 fires, Barbora gets a task — "New Inbound Lead - Check."
+1. Open contact — who are they, does their company fit OAK'S LAB's ICP?
+2. If worth passing to Josh: upgrade to MQL, assign to Josh Urban, create follow-up task.
 3. If not worth pursuing: leave as Lead, add a note, close the task.
 
 ### Handle a new MQL (Josh)
-1. Review the contact \u2014 does their company fit ICP?
-2. Score: set Lead Quality Tier (Tier 1 = perfect / Tier 2 = decent / Tier 3 = bad fit / Not a fit)
-3. If not a fit: set Tier, make a note. No deal.
-4. If worth pursuing: confirm call, update to SQL.
-5. After call \u2014 fit confirmed: update to Opportunity, create deal.` },
+Josh receives: Slack notification + task + email notification.
+1. Review the contact — who are they, what company, does it fit ICP?
+2. Score the company: set ICP Tier on the company record (Tier 1/2/3/Not our ICP).
+3. If not a fit: set ICP Tier → Not our ICP, make a note. No deal, no further action.
+4. If worth pursuing: confirm the call or reach out to schedule. Update Lifecycle Stage → SQL.
+5. After call — fit confirmed: update to Opportunity, create deal, score Deal Tier.
+6. After call — not a fit: set ICP Tier → Not our ICP, make a note. No deal.
+
+### Handle spam or junk form submissions (Josh)
+1. Open the contact record, confirm it's spam or irrelevant.
+2. Leave the contact as is — do not update lifecycle stage, do not set ICP Tier, do not create a deal.
+3. Optionally add a note (e.g. "Spam — no action").
+4. Close the task.
+5. If it bothers you from a data cleanliness perspective: set ICP Tier = Not our ICP on the company record.
+Why not delete? Junk contacts don't affect reporting if no properties are updated. Deleting can cause issues with workflow history.` },
   { title: "How-Tos: Outbound", icon: "\u2713", track: "outbound", content: `### Manually add a contact
-1. Always find or create the company first.
-2. Search HubSpot for the company. If it doesn't exist, create it: Company Name, Industry, Country/Region, City, LinkedIn.
-3. Create the contact FROM the company record (ensures auto-association).
-4. Fill: First Name, Last Name, Email, Phone, Job Title, LinkedIn URL, Country/Region, City, Lead Source Category (Outbound), Lifecycle Stage (only if genuine trigger — otherwise leave empty), Contact Owner.
-5. Do NOT create a deal — only create deals at Opportunity stage.
+1. Always find or create the company first (Company Name, Industry, Country/Region, City, LinkedIn).
+2. Create the contact FROM the company record (ensures auto-association).
+3. Fill: First Name, Last Name, Email, Phone, Job Title, LinkedIn URL, Country/Region, City, Lead Source Category (Outbound), Lifecycle Stage (only if genuine trigger — otherwise leave empty), Contact Owner.
+4. Do NOT create a deal — only create deals at Opportunity stage.
 
 ### Import from Clay
-Two separate imports — companies first, then contacts. Companies: Go to Contacts > Import > Single file > Companies. Contacts: Go to Contacts > Import > Single file > Contacts. Add Lead Source Category = Outbound in Clay before export. Do NOT include Lifecycle Stage or Lead Status. After both imports, spot-check 5\u201310 contacts and fix orphaned ones.
+Two separate imports — companies first, then contacts.
+- **Companies**: Contacts → Import → Single file → Companies. Key fields: Company Name, Industry, Country/Region, LinkedIn. Add in Clay: Lead Source Category = Outbound, Channel, Deal Source.
+- **Contacts**: Contacts → Import → Single file → Contacts. Key fields: First Name, Last Name, Email (critical), Phone, LinkedIn, Job Title. Do NOT include Lifecycle Stage or Lead Status.
+- After both: spot-check 5–10 contacts, fix orphaned ones, do not manually set Lifecycle Stage.
+
+### A contact just came in — what do I do?
+The old habit was to create a deal immediately. **Do not do this.**
+1. **Contact arrives** — Lifecycle Stage is empty (correct). No deal exists (correct).
+2. **Is there a trigger signal?** (funding round, new CTO, hiring spike) → Yes: set Lead, begin outreach. No: leave empty.
+3. **Contact responds positively, call booked** → set MQL.
+4. **First call with Sean, fit + budget confirmed** → set SQL. Still no deal.
+5. **Second conversation, clear intent** → set Opportunity. **Now** create the deal. Score Deal Tier.
+💡 No deal until Opportunity. A deal = active commercial conversation with confirmed intent.
 
 ### Move outbound contacts through stages
-- Empty to Lead: genuine trigger signal exists
-- Lead to MQL: responded positively, call booked
-- MQL to SQL: first call with Sean done, fit + budget confirmed
-- SQL to Opportunity: second conversation, clear intent, create deal now` },
+- Empty → Lead: genuine trigger signal exists
+- Lead → MQL: responded positively, call booked
+- MQL → SQL: first call with Sean done, fit + budget confirmed
+- SQL → Opportunity: second conversation, clear intent, create deal now` },
   { title: "How-Tos: Deals", icon: "\u2713", track: "both", content: `### Create a deal
 1. Open contact, set Lifecycle Stage to Opportunity
 2. Deals panel, click + Add
-3. Name = company name only (e.g. Acme)
-4. Pipeline = New Business, Stage = Qualification (or Discovery if Jake skipped)
-5. Set Deal Type, Channel, fill required properties
-6. Sean creates outbound deals. Josh creates inbound deals.
+3. Name = company name only (e.g. "Acme")
+4. Pipeline = New Business
+5. Stage = Qualification (or Discovery if Jake skipped)
+6. Set Deal Type (New Business / Existing Business)
+7. Set Channel (Outbound / Inbound / Client Expansion)
+8. Fill required properties for the stage
+9. Click Create deal
+10. Score the Deal Tier using the Lead Scoring Matrix
+Sean creates outbound deals. Josh creates inbound deals.
 
 ### Move a deal through the pipeline
-Use board view. Before moving: Discovery (intro call done), Proposal (requirements scoped), Negotiation (proposal sent), Contract (terms agreed), Closed Won (contract signed), Closed Lost (loss reason required), Nurture (nurture reason required). Always fill required properties and keep close date up to date.
+- **Discovery**: Intro call with Jake done, strategic fit confirmed.
+- **Proposal**: Requirements scoped, ready to send proposal.
+- **Negotiation**: Proposal sent, reviewing terms.
+- **Contract**: Commercial terms agreed.
+- **Closed Won**: Contract signed.
+- **Closed Lost**: No longer moving forward — loss reason required.
+- **Nurture**: Good fit but not ready — nurture reason required.
+Always fill required properties. Keep close date up to date. Add notes after every significant interaction.
 
 ### Nurture vs Closed Lost
-**Nurture:** genuine potential within 6 months. Fill Nurture Reason. Reminders at 2, 4, 6 months. Auto-closes after 6 months.
-**Closed Lost:** no realistic prospect within 6 months. Fill Loss reason. After 6 months: email + task to check back in.` },
+**Nurture:** genuine potential within 6 months. Fill Nurture Reason. Reminders at 2, 4, 6 months. Auto-closes after 6 months. Do not use Nurture to avoid Closed Lost.
+**Closed Lost:** no realistic prospect within 6 months. Fill Loss reason (cannot skip). After 6 months: email + task to check back in.` },
+  { title: "Legacy Contacts", icon: "\u25CC", track: "both", content: `Legacy contacts are not deleted — marked as non-marketing contacts and hidden from default views. If a legacy contact re-engages, they return to active status.
+
+### A contact is marked Legacy if:
+- **No recent activity**: Create date before 1 Jan 2025 and last activity date more than 365 days ago (~30,700)
+- **Do Not Contact**: Lead status is marked as DO NOT CONTACT (~4,400)
+- **Hard bounce**: Email hard bounce reason is known (~200)
+- **Deactivated owner**: Contact owner is a deactivated user (~1,900)
+
+### A company is marked Legacy if:
+All of its associated contacts are legacy contacts.
+
+### Edge case:
+If a contact is imported after 1 March 2026 and merges with an existing contact → mark the original contact as Legacy = No.` },
   { title: "FAQ", icon: "?", track: "both", content: `### How do I create a filtered view?
 Go to Contacts (or Companies/Deals) > click "All filters" > add criteria > click "Save view". Name it and choose whether to share.
 
@@ -134,14 +205,14 @@ Open one record > Actions > Merge. Search for the duplicate, review values to ke
 ### How do I reassign a contact owner?
 Open contact > find "Contact owner" in sidebar > select new owner. Bulk: select multiple in list view > click "Assign".` },
   { title: "General Tips", icon: "\u2605", track: "both", content: `- **Activity feed**: Check daily (bell icon) for task reminders, form submissions, and email replies.
-- **Notes**: Always log notes after calls or meetings \u2014 keeps the team aligned.
+- **Notes**: Always log notes after calls or meetings — keeps the team aligned.
 - **Tasks**: Use HubSpot tasks instead of your own to-do list for CRM follow-ups.
 - **Board view vs. list view**: Board view for deals (drag and drop), list view for contacts/companies (bulk actions).
 - **Keyboard shortcuts**: Press \`G\` then \`C\` for contacts, \`G\` then \`D\` for deals. Press \`?\` to see all shortcuts.` },
 ];
 
-const CHANGELOG_ID = "2026-03-11";
-const CHANGELOG_TEXT = "Nurture auto-close changed to 6 months. New Troubleshooting & Reporting suggestions added.";
+const CHANGELOG_ID = "2026-03-11b";
+const CHANGELOG_TEXT = "Major docs update: Tier System added, detailed workflow breakdowns, new outbound step-by-step guide, spam handling process, and expanded ICP tier definitions.";
 
 function getRecentQuestions(chats, max = 4) {
   const questions = [];
