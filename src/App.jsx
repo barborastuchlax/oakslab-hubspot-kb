@@ -20,7 +20,7 @@ const SUGGESTIONS = [
 ];
 
 const DOCS = [
-  { title: "Lifecycle Stages", content: `### Inbound Track
+  { title: "Lifecycle Stages", icon: "\u2B24", viz: "lifecycle", content: `### Inbound Track
 - Lead: Inbound form submission (non-Talk to Sales). Assigned automatically via workflow.
 - MQL: Talk to Sales form submission or direct meeting booking with Josh. Assigned automatically.
 - SQL: Josh reviewed, accepted, call scheduled. Pre-qualified before first call. Manual.
@@ -38,7 +38,7 @@ const DOCS = [
 ### Key differences
 - Inbound SQL: before first call (Josh pre-qualifies). Outbound SQL: after first call (Sean confirms fit).
 - Inbound deal created after Josh's first call. Outbound deal created after second conversation with Sean.` },
-  { title: "Deal Pipeline", content: `- Qualification: Tier, Company Type, Industry, Channel, Deal Source
+  { title: "Deal Pipeline", icon: "\u25B7", viz: "pipeline", content: `- Qualification: Tier, Company Type, Industry, Channel, Deal Source
 - Discovery/Scoping: Tier, Project Budget, Close Date, How they heard about us?, Deal scored and tier updated?, Amount
 - Proposal: Close Date, Project Budget
 - Negotiation: none (intentional)
@@ -52,7 +52,7 @@ Nurture Reason options: Budget, Internal priorities shifted, Market conditions, 
 Deals enter at Qualification by default, or Discovery if Jake is skipped. A deal is only created when a contact reaches Opportunity stage.
 
 Nurture is NOT a dead end — automated follow-ups at 2, 4, 6 months. Auto-closes to Closed Lost after 6 months with no action.` },
-  { title: "Workflows", content: `- WF-01: New inbound contact sets Lead based on source. Excludes MQL+. Excludes Talk to Sales form.
+  { title: "Workflows", icon: "\u21BB", content: `- WF-01: New inbound contact sets Lead based on source. Excludes MQL+. Excludes Talk to Sales form.
 - WF-02: Talk to Sales form OR Josh meeting booking sets MQL, assigns to Josh, creates task for Barbora.
 - WF-03: Other inbound forms (about form, newsletter footer) sets Lead, creates task for Barbora. No owner assigned.
 - WF-04: Talk to Sales form OR Josh meeting sends Slack to Josh, creates research task for Josh.
@@ -62,7 +62,7 @@ Nurture is NOT a dead end — automated follow-ups at 2, 4, 6 months. Auto-close
 
 ### Inbound forms note
 All forms are Webflow forms (not native HubSpot). Form mapping via native Webflow-HubSpot integration. Submissions sent via Zapier. They show as non-HubSpot forms in HubSpot — this is expected. If a form stops triggering: check Zapier zap and Webflow-HubSpot integration first.` },
-  { title: "How-Tos", content: `### Manually add a contact
+  { title: "How-Tos", icon: "\u2713", content: `### Manually add a contact
 1. Always find or create the company first.
 2. Search HubSpot for the company. If it doesn't exist, create it: Company Name, Industry, Country/Region, City, LinkedIn.
 3. Create the contact FROM the company record (ensures auto-association).
@@ -70,7 +70,7 @@ All forms are Webflow forms (not native HubSpot). Form mapping via native Webflo
 5. Do NOT create a deal — only create deals at Opportunity stage.
 
 ### Import from Clay
-Two separate imports — companies first, then contacts. Companies: Go to Contacts > Import > Single file > Companies. Contacts: Go to Contacts > Import > Single file > Contacts. Add Lead Source Category = Outbound in Clay before export. Do NOT include Lifecycle Stage or Lead Status. After both imports, spot-check 5–10 contacts and fix orphaned ones.
+Two separate imports — companies first, then contacts. Companies: Go to Contacts > Import > Single file > Companies. Contacts: Go to Contacts > Import > Single file > Contacts. Add Lead Source Category = Outbound in Clay before export. Do NOT include Lifecycle Stage or Lead Status. After both imports, spot-check 5\u201310 contacts and fix orphaned ones.
 
 ### Move outbound contacts through stages
 - Empty to Lead: genuine trigger signal exists
@@ -79,16 +79,16 @@ Two separate imports — companies first, then contacts. Companies: Go to Contac
 - SQL to Opportunity: second conversation, clear intent, create deal now
 
 ### Review a new lead (Barbora)
-1. Open contact — check who they are, what company, does it fit ICP?
+1. Open contact \u2014 check who they are, what company, does it fit ICP?
 2. If worth passing to Josh: upgrade to MQL, assign to Josh, create follow-up task.
 3. If not worth pursuing: leave as Lead, add a note, close the task.
 
 ### Handle a new MQL (Josh)
-1. Review the contact — does their company fit ICP?
+1. Review the contact \u2014 does their company fit ICP?
 2. Score: set Lead Quality Tier (Tier 1 = perfect / Tier 2 = decent / Tier 3 = bad fit / Not a fit)
 3. If not a fit: set Tier, make a note. No deal.
 4. If worth pursuing: confirm call, update to SQL.
-5. After call — fit confirmed: update to Opportunity, create deal.
+5. After call \u2014 fit confirmed: update to Opportunity, create deal.
 
 ### Create a deal
 1. Open contact, set Lifecycle Stage to Opportunity
@@ -104,7 +104,7 @@ Use board view. Before moving: Discovery (intro call done), Proposal (requiremen
 ### Nurture vs Closed Lost
 **Nurture:** genuine potential within 6 months. Fill Nurture Reason. Reminders at 2, 4, 6 months. Auto-closes after 6 months.
 **Closed Lost:** no realistic prospect within 6 months. Fill Loss reason. After 6 months: email + task to check back in.` },
-  { title: "FAQ", content: `### How do I create a filtered view?
+  { title: "FAQ", icon: "?", content: `### How do I create a filtered view?
 Go to Contacts (or Companies/Deals) > click "All filters" > add criteria > click "Save view". Name it and choose whether to share.
 
 ### How do I create a report?
@@ -127,8 +127,8 @@ Open one record > Actions > Merge. Search for the duplicate, review values to ke
 
 ### How do I reassign a contact owner?
 Open contact > find "Contact owner" in sidebar > select new owner. Bulk: select multiple in list view > click "Assign".` },
-  { title: "General Tips", content: `- **Activity feed**: Check daily (bell icon) for task reminders, form submissions, and email replies.
-- **Notes**: Always log notes after calls or meetings — keeps the team aligned.
+  { title: "General Tips", icon: "\u2605", content: `- **Activity feed**: Check daily (bell icon) for task reminders, form submissions, and email replies.
+- **Notes**: Always log notes after calls or meetings \u2014 keeps the team aligned.
 - **Tasks**: Use HubSpot tasks instead of your own to-do list for CRM follow-ups.
 - **Board view vs. list view**: Board view for deals (drag and drop), list view for contacts/companies (bulk actions).
 - **Keyboard shortcuts**: Press \`G\` then \`C\` for contacts, \`G\` then \`D\` for deals. Press \`?\` to see all shortcuts.` },
@@ -345,20 +345,108 @@ function formatInline(text) {
   });
 }
 
-// --- Doc section ---
-function DocSection({ title, content }) {
-  const [open, setOpen] = useState(false);
+// --- Visualization: Lifecycle Stages ---
+function LifecycleViz() {
+  const stages = ["Lead", "MQL", "SQL", "Opportunity", "Customer"];
+  const inbound = ["Form submit", "Talk to Sales / Josh meeting", "Josh pre-qualifies", "First call, fit confirmed", "Deal Closed Won"];
+  const outbound = ["Trigger signal", "Positive response, call booked", "Sean call, fit confirmed", "2nd call, clear intent", "Deal Closed Won"];
   return (
-    <div style={{ background: "#fff", border: "1px solid #e0ded8", borderRadius: "10px", transition: "border-color 0.15s", overflow: "hidden" }}
-      onMouseEnter={e => { if (!open) e.currentTarget.style.borderColor = "#111110"; }}
-      onMouseLeave={e => { if (!open) e.currentTarget.style.borderColor = "#e0ded8"; }}>
-      <button onClick={() => setOpen(!open)} style={{ width: "100%", background: "none", border: "none", padding: "14px 16px", textAlign: "left", cursor: "pointer", fontSize: "13px", color: "#444", fontFamily: "inherit", display: "flex", alignItems: "center", gap: "8px" }}>
-        <span style={{ color: "#999", fontSize: "11px", transition: "transform 0.15s", transform: open ? "rotate(90deg)" : "none" }}>&#9658;</span>
+    <div style={{ padding: "16px 0 8px" }}>
+      <div style={{ display: "flex", gap: "2px", marginBottom: "16px" }}>
+        {stages.map((s, i) => (
+          <div key={i} style={{ flex: 1, textAlign: "center" }}>
+            <div style={{ background: i === stages.length - 1 ? "#111110" : `rgba(17,17,16,${0.12 + i * 0.15})`, color: i >= 3 ? "#fff" : "#111110", borderRadius: i === 0 ? "6px 0 0 6px" : i === stages.length - 1 ? "0 6px 6px 0" : "0", padding: "8px 4px", fontSize: "11px", fontWeight: 700, letterSpacing: "0.02em" }}>{s}</div>
+          </div>
+        ))}
+      </div>
+      {[{ label: "Inbound", items: inbound, color: "#3b82f6" }, { label: "Outbound", items: outbound, color: "#f59e0b" }].map((track) => (
+        <div key={track.label} style={{ marginBottom: "10px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+            <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: track.color, flexShrink: 0 }} />
+            <span style={{ fontSize: "11px", fontWeight: 600, color: "#666", textTransform: "uppercase", letterSpacing: "0.04em" }}>{track.label}</span>
+          </div>
+          <div style={{ display: "flex", gap: "2px" }}>
+            {track.items.map((desc, i) => (
+              <div key={i} style={{ flex: 1, fontSize: "10px", color: "#888", lineHeight: 1.3, padding: "4px 4px", borderLeft: i === 0 ? "none" : "1px solid #e8e6e0", textAlign: "center" }}>{desc}</div>
+            ))}
+          </div>
+        </div>
+      ))}
+      <div style={{ fontSize: "10px", color: "#aaa", marginTop: "8px", fontStyle: "italic" }}>Key: Inbound SQL is before first call (Josh pre-qualifies) / Outbound SQL is after first call (Sean confirms)</div>
+    </div>
+  );
+}
+
+// --- Visualization: Deal Pipeline ---
+function PipelineViz() {
+  const stages = [
+    { name: "Qualification", fields: "Tier, Type, Industry, Channel, Source", w: 100 },
+    { name: "Discovery", fields: "Budget, Close Date, Amount", w: 90 },
+    { name: "Proposal", fields: "Close Date, Budget", w: 80 },
+    { name: "Negotiation", fields: "\u2014", w: 70 },
+    { name: "Contract", fields: "\u2014", w: 62 },
+    { name: "Closed Won", fields: "\u2014", w: 55 },
+  ];
+  return (
+    <div style={{ padding: "16px 0 8px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "3px", alignItems: "center" }}>
+        {stages.map((s, i) => (
+          <div key={i} style={{ width: `${s.w}%`, background: i === stages.length - 1 ? "#111110" : "#f0efeb", borderRadius: "6px", padding: "8px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", transition: "background 0.15s" }}>
+            <span style={{ fontSize: "12px", fontWeight: 600, color: i === stages.length - 1 ? "#fff" : "#333" }}>{s.name}</span>
+            <span style={{ fontSize: "10px", color: i === stages.length - 1 ? "#999" : "#999" }}>{s.fields}</span>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", justifyContent: "center", gap: "16px", marginTop: "12px" }}>
+        {[{ name: "Nurture", desc: "Auto follow-up 2/4/6mo", color: "#f59e0b" }, { name: "Closed Lost", desc: "Check-in after 6mo", color: "#ef4444" }].map((s) => (
+          <div key={s.name} style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#888" }}>
+            <div style={{ width: "8px", height: "8px", borderRadius: "2px", background: s.color }} />
+            <span><strong style={{ color: "#555" }}>{s.name}</strong> \u2014 {s.desc}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// --- Doc section ---
+function DocSection({ title, content, icon, viz, isMobile }) {
+  const [open, setOpen] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const hasViz = !!viz;
+  return (
+    <div style={{ background: "#fff", border: open ? "1px solid #ccc" : "1px solid #e0ded8", borderRadius: "12px", transition: "all 0.15s", overflow: "hidden", gridColumn: open ? "1 / -1" : undefined }}
+      onMouseEnter={e => { if (!open) e.currentTarget.style.borderColor = "#bbb"; }}
+      onMouseLeave={e => { if (!open) e.currentTarget.style.borderColor = open ? "#ccc" : "#e0ded8"; }}>
+      <button onClick={() => { setOpen(!open); if (open) setShowDetails(false); }}
+        style={{ width: "100%", background: "none", border: "none", padding: "14px 16px", textAlign: "left", cursor: "pointer", fontSize: "13px", color: open ? "#111110" : "#444", fontWeight: open ? 600 : 400, fontFamily: "inherit", display: "flex", alignItems: "center", gap: "10px" }}>
+        <span style={{ color: open ? "#111110" : "#bbb", fontSize: "12px", transition: "transform 0.15s", transform: open ? "rotate(90deg)" : "none", flexShrink: 0 }}>&#9658;</span>
         {title}
       </button>
       {open && (
-        <div style={{ padding: "0 16px 14px", fontSize: "13px", color: "#444", lineHeight: 1.7, borderTop: "1px solid #e8e6e0" }}>
-          {renderMarkdown(content)}
+        <div style={{ padding: "0 16px 16px" }}>
+          {hasViz && (
+            <div style={{ borderTop: "1px solid #e8e6e0" }}>
+              {viz === "lifecycle" && <LifecycleViz />}
+              {viz === "pipeline" && <PipelineViz />}
+            </div>
+          )}
+          {hasViz ? (
+            <>
+              <button onClick={() => setShowDetails(!showDetails)} style={{ background: "none", border: "none", fontSize: "11px", color: "#999", cursor: "pointer", fontFamily: "inherit", padding: "4px 0", textTransform: "uppercase", letterSpacing: "0.04em", fontWeight: 600 }}>
+                {showDetails ? "\u25BE Hide details" : "\u25B8 Show details"}
+              </button>
+              {showDetails && (
+                <div style={{ fontSize: "13px", color: "#444", lineHeight: 1.7, marginTop: "8px", borderTop: "1px solid #e8e6e0", paddingTop: "12px" }}>
+                  {renderMarkdown(content)}
+                </div>
+              )}
+            </>
+          ) : (
+            <div style={{ fontSize: "13px", color: "#444", lineHeight: 1.7, borderTop: "1px solid #e8e6e0", paddingTop: "8px" }}>
+              {renderMarkdown(content)}
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -451,6 +539,7 @@ export default function App() {
   const [streamingText, setStreamingText] = useState("");
   const [authError, setAuthError] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [homeTab, setHomeTab] = useState("ask");
   const [isMobile, setIsMobile] = useState(() => typeof window !== "undefined" && window.innerWidth <= 768);
   const [showUnicorn, setShowUnicorn] = useState(false);
   const unicornTimer = useRef(null);
@@ -630,26 +719,35 @@ export default function App() {
             {empty ? (
               <div style={{ paddingTop: "60px" }}>
                 <p style={{ fontSize: "28px", fontWeight: 700, color: "#111110", letterSpacing: "-0.03em", marginBottom: "8px" }}>What do you need to do?</p>
-                <p style={{ color: "#888", marginBottom: "32px", fontSize: "15px" }}>Ask anything about HubSpot processes, workflows, or pipeline.</p>
-                <p style={{ fontSize: "11px", fontWeight: 600, color: "#999", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "10px" }}>Browse Documentation</p>
-                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "10px", marginBottom: "32px" }}>
-                  {DOCS.map((doc, di) => (
-                    <DocSection key={di} title={doc.title} content={doc.content} />
+                <p style={{ color: "#888", marginBottom: "24px", fontSize: "15px" }}>Ask anything about HubSpot processes, workflows, or pipeline.</p>
+                <div style={{ display: "flex", gap: "0", marginBottom: "24px", borderBottom: "1px solid #e0ded8" }}>
+                  {["Ask", "Browse"].map((tab) => (
+                    <button key={tab} onClick={() => setHomeTab(tab.toLowerCase())}
+                      style={{ background: "none", border: "none", borderBottom: homeTab === tab.toLowerCase() ? "2px solid #111110" : "2px solid transparent", padding: "8px 20px", fontSize: "13px", fontWeight: homeTab === tab.toLowerCase() ? 600 : 400, color: homeTab === tab.toLowerCase() ? "#111110" : "#999", cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s", marginBottom: "-1px" }}>{tab}</button>
                   ))}
                 </div>
-                <p style={{ fontSize: "11px", fontWeight: 600, color: "#999", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "10px" }}>Quick Questions</p>
-                {SUGGESTIONS.map((cat, ci) => (
-                  <div key={ci} style={{ marginBottom: "20px" }}>
-                    <p style={{ fontSize: "11px", fontWeight: 600, color: "#999", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>{cat.label}</p>
-                    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "10px" }}>
-                      {cat.items.map((s, i) => (
-                        <button key={i} onClick={() => send(s)} style={{ background: "#fff", border: "1px solid #e0ded8", borderRadius: "10px", padding: "14px 16px", textAlign: "left", cursor: "pointer", fontSize: "13px", color: "#444", lineHeight: 1.5, transition: "border-color 0.15s", fontFamily: "inherit" }}
-                          onMouseEnter={e => e.target.style.borderColor = "#111110"} onMouseLeave={e => e.target.style.borderColor = "#e0ded8"}>{s}</button>
-                      ))}
-                    </div>
+                {homeTab === "ask" ? (
+                  <>
+                    {SUGGESTIONS.map((cat, ci) => (
+                      <div key={ci} style={{ marginBottom: "20px" }}>
+                        <p style={{ fontSize: "11px", fontWeight: 600, color: "#999", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>{cat.label}</p>
+                        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "10px" }}>
+                          {cat.items.map((s, i) => (
+                            <button key={i} onClick={() => send(s)} style={{ background: "#fff", border: "1px solid #e0ded8", borderRadius: "10px", padding: "14px 16px", textAlign: "left", cursor: "pointer", fontSize: "13px", color: "#444", lineHeight: 1.5, transition: "border-color 0.15s", fontFamily: "inherit" }}
+                              onMouseEnter={e => e.target.style.borderColor = "#111110"} onMouseLeave={e => e.target.style.borderColor = "#e0ded8"}>{s}</button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                    <p style={{ color: "#bbb", fontSize: "12px", textAlign: "center", marginTop: "4px" }}>These are just suggestions — ask anything about HubSpot.</p>
+                  </>
+                ) : (
+                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "10px" }}>
+                    {DOCS.map((doc, di) => (
+                      <DocSection key={di} title={doc.title} content={doc.content} icon={doc.icon} viz={doc.viz} isMobile={isMobile} />
+                    ))}
                   </div>
-                ))}
-                <p style={{ color: "#bbb", fontSize: "12px", textAlign: "center", marginTop: "12px" }}>These are just suggestions — ask anything about HubSpot.</p>
+                )}
               </div>
             ) : (
               <>
