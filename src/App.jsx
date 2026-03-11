@@ -48,13 +48,19 @@ function saveChats(chats) {
 }
 
 // --- Loading indicator with rotating verbs ---
+function pickVerb(exclude) {
+  let v;
+  do { v = LOADING_VERBS[Math.floor(Math.random() * LOADING_VERBS.length)]; } while (v === exclude);
+  return v;
+}
+
 function LoadingIndicator() {
-  const [verb, setVerb] = useState(() => LOADING_VERBS[Math.floor(Math.random() * LOADING_VERBS.length)]);
+  const [verb, setVerb] = useState(() => pickVerb());
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setVerb(LOADING_VERBS[Math.floor(Math.random() * LOADING_VERBS.length)]);
-    }, 3000);
+      setVerb(prev => pickVerb(prev));
+    }, 1500);
     return () => clearInterval(interval);
   }, []);
 
