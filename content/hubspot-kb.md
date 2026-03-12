@@ -274,11 +274,9 @@ These are active project inquiries — they enter HubSpot as MQL (same logic as 
 6. Set Contact Owner = Josh
 7. Set Lifecycle Stage = MQL
 8. Set the ICP Tier on the company record (see Tier System section for definitions)
-9. Reply to the lead via the Clutch Dashboard (not email) — Clutch requires all communication to go through their platform
-10. Schedule a call — once scheduled and pre-qualified, update Lifecycle Stage → SQL
+9. Reply to the lead via the Clutch Dashboard and schedule a call
+10. Once scheduled and pre-qualified, update Lifecycle Stage → SQL
 11. After the call, if fit confirmed: update Lifecycle Stage → Opportunity, create a deal, score Deal Tier
-
-⚠️ Do not reply to the Clutch notification email directly — it goes to a no-reply address. Use the Clutch Dashboard to message the lead.
 
 ---
 
