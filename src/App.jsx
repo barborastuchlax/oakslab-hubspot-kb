@@ -3,7 +3,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 const SUGGESTIONS = [
   { label: "Processes", items: [
     "What do I do when a new MQL comes in?",
-    "How do I import contacts from Clay?",
+    "How do I handle a new lead from Clutch?",
   ]},
   { label: "Pipeline", items: [
     "When should I create a deal?",

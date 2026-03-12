@@ -26,7 +26,7 @@ Lifecycle stages live at the contact level and reflect where someone is in the r
 
 ### Inbound Track
 - **Lead**: Inbound form submission (non-Talk to Sales). Assigned automatically via workflow.
-- **MQL**: Talk to Sales form submission or direct meeting booking with Josh. Assigned automatically.
+- **MQL**: Talk to Sales form submission, direct meeting booking with Josh, or Clutch direct contact (manual — see Clutch section). Assigned automatically for forms/meetings; manually by Josh for Clutch.
 - **SQL**: Josh has reviewed the contact, accepted them as worth pursuing, and a call is scheduled. Counts as SQL because sales has pre-qualified the lead before speaking to them. Manual.
 - **Opportunity**: Josh has taken the first call, fit is confirmed, and there is reason to continue. Deal is created and enters the pipeline at Qualification (or Discovery if Jake is skipped). Manual.
 - **Customer**: Associated deal marked Closed Won. Automatic.
@@ -121,6 +121,9 @@ Why is "Set stage when contact/company is created" off? This native setting woul
 - **WF-05**: Outbound imports (Original Source = Offline Sources, not Legacy) → sets Lead Source Category = Outbound. Does NOT set lifecycle stage.
 - **WF-06**: Deal enters Nurture → sends reminder emails at 2, 4, and 6 months to deal owner + collaborator → auto-closes to Closed Lost after 6 months + 1 day.
 - **WF-07**: Deal marked Closed Lost → 183 days later sends email to deal owner + creates follow-up task (due 3 business days after creation).
+
+### Clutch leads note
+No workflow covers Clutch leads. They arrive as email notifications from no-reply@clutch.co directly to Josh. Josh manually creates the contact and company in HubSpot and sets the properties. See the "HOW TO: HANDLE A CLUTCH LEAD" section for the full process.
 
 ### Inbound forms note
 All forms are Webflow forms (not native HubSpot). Form mapping via native Webflow–HubSpot integration. Submissions sent via Zapier. They show as non-HubSpot forms in HubSpot — this is expected. Workflow triggers referencing form names (e.g. #wf-form-let-s-talk-form) refer to the Webflow form IDs as they appear in HubSpot after the integration maps them.
@@ -252,6 +255,30 @@ What to do:
 Why leave it rather than delete it? The CRM logic now focuses on SQLs and Leads with real signals. Junk contacts sitting in the system don't affect reporting as long as no properties are updated on them. Deleting contacts can cause issues with workflow history and association records.
 
 ⚠️ If a spam contact is assigned to Josh and it bothers you from a data cleanliness perspective, set ICP Tier = Not our ICP on the company record — this ensures it never gets pulled into tier-based reporting.
+
+---
+
+## HOW TO: HANDLE A CLUTCH LEAD (JOSH — INBOUND)
+
+Clutch is a B2B marketplace where companies find service providers. When someone reaches out to OAK'S LAB through Clutch, Josh receives an email from no-reply@clutch.co with the lead details: company name, lead name, main service requested, website, and project objectives.
+
+These are active project inquiries — they enter HubSpot as MQL (same logic as Talk to Sales form submissions). There is no workflow for Clutch leads; Josh handles everything manually.
+
+### Step-by-step
+
+1. Check the Clutch email for lead details (company, contact name, service, website, objectives)
+2. Search HubSpot for the company — if it doesn't exist, create it: Company Name, Industry, Country/Region, LinkedIn Company Page, Website
+3. Open the company record and create the contact from there (so the association is automatic): First Name, Last Name, Job Title
+4. Set Lead Source Category = Inbound
+5. Set Channel = Clutch
+6. Set Contact Owner = Josh
+7. Set Lifecycle Stage = MQL
+8. Set the ICP Tier on the company record (see Tier System section for definitions)
+9. Reply to the lead via the Clutch Dashboard (not email) — Clutch requires all communication to go through their platform
+10. Schedule a call — once scheduled and pre-qualified, update Lifecycle Stage → SQL
+11. After the call, if fit confirmed: update Lifecycle Stage → Opportunity, create a deal, score Deal Tier
+
+⚠️ Do not reply to the Clutch notification email directly — it goes to a no-reply address. Use the Clutch Dashboard to message the lead.
 
 ---
 
