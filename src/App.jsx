@@ -429,9 +429,29 @@ function renderMarkdown(text) {
       elements.push(<h3 key={i} style={{ fontSize: "13px", fontWeight: 700, color: "#111110", margin: "12px 0 4px", textTransform: "uppercase", letterSpacing: "0.04em" }}>{line.slice(4)}</h3>);
     } else if (line.match(/^\d+\.\s/)) {
       const items = [];
-      while (i < lines.length && lines[i].match(/^\d+\.\s/)) {
-        items.push(<li key={i} style={{ marginBottom: "4px" }}>{formatInline(lines[i].replace(/^\d+\.\s/, ""))}</li>);
-        i++;
+      while (i < lines.length) {
+        const cur = lines[i];
+        if (cur.match(/^\d+\.\s/)) {
+          // New numbered item — collect its text and any sub-items that follow
+          const subContent = [formatInline(cur.replace(/^\d+\.\s/, ""))];
+          i++;
+          const subItems = [];
+          while (i < lines.length && !lines[i].match(/^\d+\.\s/) && (lines[i].startsWith("- ") || lines[i].startsWith("  ") || lines[i].trim() === "")) {
+            const sub = lines[i];
+            if (sub.startsWith("- ") || sub.startsWith("  - ")) {
+              subItems.push(<li key={`${i}-sub`} style={{ marginBottom: "2px" }}>{formatInline(sub.replace(/^\s*-\s/, ""))}</li>);
+            }
+            // skip blank lines between items
+            i++;
+          }
+          if (subItems.length > 0) {
+            items.push(<li key={items.length} style={{ marginBottom: "6px" }}>{subContent}<ul style={{ margin: "4px 0 2px 16px", padding: 0, lineHeight: 1.7 }}>{subItems}</ul></li>);
+          } else {
+            items.push(<li key={items.length} style={{ marginBottom: "4px" }}>{subContent}</li>);
+          }
+        } else {
+          break;
+        }
       }
       elements.push(<ol key={`ol-${i}`} style={{ margin: "6px 0 6px 18px", padding: 0, lineHeight: 1.7 }}>{items}</ol>);
       continue;
