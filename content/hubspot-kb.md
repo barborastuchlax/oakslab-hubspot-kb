@@ -276,7 +276,16 @@ These are active project inquiries — they enter HubSpot as MQL (same logic as 
 8. Set the ICP Tier on the company record (see Tier System section for definitions)
 9. Reply to the lead via the Clutch Dashboard and schedule a call
 10. Once scheduled and pre-qualified, update Lifecycle Stage → SQL
-11. After the call, if fit confirmed: update Lifecycle Stage → Opportunity, create a deal, score Deal Tier
+### After the call
+
+**Fit confirmed:**
+1. Update Lifecycle Stage → Opportunity
+2. Create a deal (enters pipeline at Qualification or Discovery)
+3. Score the Deal Tier using the Lead Scoring Matrix
+
+**Not a fit:**
+1. Set ICP Tier → Not our ICP on the company record
+2. Make a note on the contact record — no deal created
 
 ---
 
