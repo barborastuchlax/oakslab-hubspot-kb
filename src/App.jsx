@@ -689,6 +689,7 @@ export default function App() {
   const unicornTimer = useRef(null);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
+  const contentRef = useRef(null);
 
   const [changelogDismissed, setChangelogDismissed] = useState(() => localStorage.getItem("changelog_dismissed") === CHANGELOG_ID);
   const activeChat = chats.find(c => c.id === activeChatId);
@@ -701,8 +702,12 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading, streamingText]);
+    if (activeChatId) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      contentRef.current?.scrollTo(0, 0);
+    }
+  }, [messages, loading, streamingText, activeChatId]);
 
   const updateChat = useCallback((chatId, newMessages) => {
     setChats(prev => {
@@ -866,7 +871,7 @@ export default function App() {
         </div>
 
         {/* Messages */}
-        <div style={{ flex: 1, overflowY: "auto", padding: "32px 0" }}>
+        <div ref={contentRef} style={{ flex: 1, overflowY: "auto", padding: "32px 0" }}>
           <div style={{ maxWidth: "760px", margin: "0 auto", padding: "0 24px" }}>
             {empty ? (
               <div style={{ paddingTop: "60px" }}>
