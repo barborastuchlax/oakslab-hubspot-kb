@@ -32,7 +32,7 @@ const DOCS = [
 - **Lead**: Inbound form submission (non-Talk to Sales). Assigned automatically via workflow.
 - **MQL**: Talk to Sales form submission or direct meeting booking with Josh. Assigned automatically.
 - **SQL**: Josh has reviewed the contact, accepted them as worth pursuing, and a call is scheduled. Pre-qualified before first call. Manual.
-- **Opportunity**: Josh has taken the first call, fit is confirmed. Deal created, enters pipeline at Qualification (or Discovery if Jake skipped). Manual.
+- **Opportunity**: Josh has taken the first call, fit is confirmed. Deal created, enters pipeline at Call with Leadership (or Discovery if Jake skipped). Manual.
 - **Customer**: Associated deal marked Closed Won. Automatic.
 
 ### Outbound Track
@@ -48,7 +48,7 @@ const DOCS = [
 - Inbound SQL: before first call — Josh pre-qualifies. Outbound SQL: after first call — Sean confirms fit.
 - Inbound MQL trigger: form fill or meeting booked. Outbound MQL trigger: positive reply to outreach.
 - Inbound deal created after Josh's first call. Outbound deal created after second conversation with Sean.` },
-  { title: "Deal Pipeline", icon: "\u25B7", viz: "pipeline", track: "both", content: `- **Qualification**: First entry point. Introductory call with Jake to assess fit. Sometimes skipped on inbound. Required: Deal Quality, Channel, Deal Source, Amount.
+  { title: "Deal Pipeline", icon: "\u25B7", viz: "pipeline", track: "both", content: `- **Call with Leadership**: First entry point. Introductory call with Jake to assess fit. Sometimes skipped on inbound. Required: Deal Quality, Channel, Deal Source, Amount.
 - **Discovery/Scoping**: Deep dive on requirements, solution design, scoping. Required: Deal Quality, Channel, Deal Source, Amount, Close Date.
 - **Proposal**: Proposal created and sent. Required: Deal Quality, Channel, Deal Source, Amount, Close Date.
 - **Negotiation**: Discussing pricing/terms, working through objections. No required properties (intentional).
@@ -59,13 +59,13 @@ const DOCS = [
 
 Nurture Reason options: Budget, Internal priorities shifted, Market conditions, Building stakeholder buy-in, Relationship building — not ready yet, Timing, Decision maker not engaged, Fundraising, Other.
 
-Deals enter at Qualification by default, or Discovery if Jake is skipped. A deal is only created when a contact reaches Opportunity stage.
+Deals enter at Call with Leadership by default, or Discovery if Jake is skipped. A deal is only created when a contact reaches Opportunity stage.
 
 Nurture is NOT a dead end — automated follow-ups at 2, 4, 6 months. Auto-closes to Closed Lost after 6 months with no action.
 
-Deals can skip Qualification and enter at Discovery in two cases: (1) inbound leads where Josh handles the first call and Jake is not needed, (2) outbound deals where enough context exists from prior calls.` },
+Deals can skip Call with Leadership and enter at Discovery in two cases: (1) inbound leads where Josh handles the first call and Jake is not needed, (2) outbound deals where enough context exists from prior calls.` },
   { title: "Tier System", icon: "\u25C6", track: "both", content: `### ICP Tier (Company level)
-Reflects how well a company matches OAK'S LAB's ideal customer profile. Set when a company is first imported or created, reviewed at Qualification. Sean sets it on outbound import. Josh sets it when qualifying inbound.
+Reflects how well a company matches OAK'S LAB's ideal customer profile. Set when a company is first imported or created, reviewed at Call with Leadership. Sean sets it on outbound import. Josh sets it when qualifying inbound.
 
 - **Tier 1 — Ideal fit**: ALL must be true: Series A–D, US-based engineering team with identifiable CTO/CPO, 10–50 engineers, confirmed openness to external engineering partners. → Prioritise immediately.
 - **Tier 2 — Strong fit, one unknown**: Most Tier 1 boxes ticked — engineering team size unclear or slightly outside sweet spot, or openness to external partners unconfirmed. → Worth pursuing, not at expense of Tier 1.
@@ -73,7 +73,7 @@ Reflects how well a company matches OAK'S LAB's ideal customer profile. Set when
 - **Not our ICP — Clear mismatch**: Bootstrapped with no funding path; pre-product/idea stage; consumer-facing with no enterprise angle; explicitly declined; non-US with no US engineering leadership. → Do not pursue.
 
 ### Deal Quality (Deal level)
-Reflects opportunity quality — scored independently by Josh after the qualification call using the Lead Scoring Matrix. Set at or immediately after Qualification, updated at Discovery if new info changes the picture.
+Reflects opportunity quality — scored independently by Josh after the qualification call using the Lead Scoring Matrix. Set at or immediately after Call with Leadership, updated at Discovery if new info changes the picture.
 
 The Deal Quality is independent from ICP Tier. A Tier 1 company can have a Tier 2 deal (decision maker not engaged, budget unclear). A Tier 2 company can have a Tier 1 deal (timing and budget both strong).` },
   { title: "Workflows", icon: "\u21BB", track: "both", content: `### Native Automations (Settings → Lifecycle Stages → Automate)
@@ -147,7 +147,7 @@ The old habit was to create a deal immediately. **Do not do this.**
 2. Deals panel, click + Add
 3. Name = company name only (e.g. "Acme")
 4. Pipeline = New Business
-5. Stage = Qualification (or Discovery if Jake skipped)
+5. Stage = Call with Leadership (or Discovery if Jake skipped)
 6. Set Deal Type (New Business / Existing Business)
 7. Set Channel (Outbound / Inbound / Client Expansion)
 8. Fill required properties for the stage
@@ -519,7 +519,7 @@ function LifecycleViz() {
 // --- Visualization: Deal Pipeline ---
 function PipelineViz() {
   const stages = [
-    { name: "Qualification", fields: "Deal Quality, Channel, Deal Source, Amount", w: 100 },
+    { name: "Call with Leadership", fields: "Deal Quality, Channel, Deal Source, Amount", w: 100 },
     { name: "Discovery", fields: "Deal Quality, Channel, Deal Source, Amount, Close Date", w: 90 },
     { name: "Proposal", fields: "Deal Quality, Channel, Deal Source, Amount, Close Date", w: 80 },
     { name: "Negotiation", fields: "\u2014", w: 70 },

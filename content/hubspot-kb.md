@@ -28,7 +28,7 @@ Lifecycle stages live at the contact level and reflect where someone is in the r
 - **Lead**: Inbound form submission (non-Talk to Sales). Assigned automatically via workflow.
 - **MQL**: Talk to Sales form submission, direct meeting booking with Josh, or Clutch direct contact (manual — see Clutch section). Assigned automatically for forms/meetings; manually by Josh for Clutch.
 - **SQL**: Josh has reviewed the contact, accepted them as worth pursuing, and a call is scheduled. Counts as SQL because sales has pre-qualified the lead before speaking to them. Manual.
-- **Opportunity**: Josh has taken the first call, fit is confirmed, and there is reason to continue. Deal is created and enters the pipeline at Qualification (or Discovery if Jake is skipped). Manual.
+- **Opportunity**: Josh has taken the first call, fit is confirmed, and there is reason to continue. Deal is created and enters the pipeline at Call with Leadership (or Discovery if Jake is skipped). Manual.
 - **Customer**: Associated deal marked Closed Won. Automatic.
 
 ### Outbound Track
@@ -49,11 +49,9 @@ Lifecycle stages live at the contact level and reflect where someone is in the r
 
 ## DEAL PIPELINE STAGES
 
-Deals are created when a contact becomes an Opportunity. All deals enter at Qualification by default (or Discovery if Jake is skipped).
+Deals are created when a contact becomes an Opportunity. All deals enter at Call with Leadership by default (or Discovery if Jake is skipped).
 
-⚠️ TBD: Agree on new name for Qualification stage — equivalent to "Call with Jake" but channel-agnostic. Options: Intro Call, Initial Meeting, First Call.
-
-- **Qualification**: First point of entry for all new deals. Introductory call with Jake to assess fit and strategic alignment. Sometimes skipped on inbound — deals enter Discovery directly. Required: Deal Quality, Channel, Deal Source, Amount.
+- **Call with Leadership**: First point of entry for all new deals. Introductory call with company leadership to assess fit and strategic alignment. Sometimes skipped on inbound — deals enter Discovery directly. Required: Deal Quality, Channel, Deal Source, Amount.
 - **Discovery/Scoping**: Deep dive on requirements, solution design, scoping. Jake may be skipped and deals enter here directly. Required: Deal Quality, Channel, Deal Source, Amount, Close Date.
 - **Proposal**: Proposal created and sent, reviewing terms. Required: Deal Quality, Channel, Deal Source, Amount, Close Date.
 - **Negotiation**: Discussing pricing/terms, working through objections. No required properties (intentional).
@@ -68,7 +66,7 @@ Budget, Internal priorities shifted, Market conditions, Building stakeholder buy
 ### Deal stage notes
 - Nurture is NOT a dead end — automated follow-ups at 2, 4, and 6 months. If nothing changes after 6 months, the deal is automatically moved to Closed Lost.
 - Loss reason is required on Closed Lost.
-- Deals can skip Qualification and enter at Discovery in two cases: (1) inbound leads where Josh handles the first call and Jake is not needed, (2) outbound deals where enough context exists from prior calls.
+- Deals can skip Call with Leadership and enter at Discovery in two cases: (1) inbound leads where Josh handles the first call and Jake is not needed, (2) outbound deals where enough context exists from prior calls.
 - Negotiation, Contract, and Closed Won have no required properties — this is intentional.
 
 ---
@@ -78,7 +76,7 @@ Budget, Internal priorities shifted, Market conditions, Building stakeholder buy
 OAK'S LAB uses two tier properties and one scoring matrix to evaluate fit and prioritise pipeline.
 
 ### Ideal Customer Profile Tier (Company level)
-The ICP Tier lives at the company level. It reflects how well a company matches OAK'S LAB's ideal customer profile. Set when a company is first imported or created, and reviewed at Qualification stage.
+The ICP Tier lives at the company level. It reflects how well a company matches OAK'S LAB's ideal customer profile. Set when a company is first imported or created, and reviewed at Call with Leadership stage.
 
 Who sets it: Sean sets it on outbound import. Josh sets it when qualifying an inbound lead.
 
@@ -88,14 +86,14 @@ Who sets it: Sean sets it on outbound import. Josh sets it when qualifying an in
 - **Not our ICP — Clear mismatch**: Any one of: bootstrapped with no funding path visible; pre-product or idea stage; consumer-facing product with no enterprise or compliance angle; previously contacted and explicitly declined; non-US company with no US engineering leadership. → Do not pursue.
 
 ### Deal Quality (Deal level)
-The Deal Quality lives at the deal level. It reflects opportunity quality — scored independently by Josh after the qualification call, using the Lead Scoring Matrix.
+The Deal Quality lives at the deal level. It reflects opportunity quality — scored independently by Josh after the qualification call, using the [Lead Scoring Matrix](https://docs.google.com/spreadsheets/d/1ym6Csd1KzLWKICdZYn_E4KZQOvAvTd7gzXQT8mCh3j8/edit?gid=0#gid=0).
 
 Who sets it: Josh, after every qualification call.
-When: At or immediately after the Qualification stage. Updated again at Discovery if new information changes the picture.
+When: At or immediately after the Call with Leadership stage. Updated again at Discovery if new information changes the picture.
 
 The Deal Quality is scored independently from the Company ICP Tier. A Tier 1 company can have a Tier 2 deal if the decision maker isn't engaged or budget is unclear. A Tier 2 company can have a Tier 1 deal if timing and budget are both strong.
 
-Refer to the Lead Scoring Matrix (Google Sheets) for the scoring criteria used to determine Deal Quality.
+The scoring criteria are documented in the [Lead Scoring Matrix](https://docs.google.com/spreadsheets/d/1ym6Csd1KzLWKICdZYn_E4KZQOvAvTd7gzXQT8mCh3j8/edit?gid=0#gid=0). It covers the factors Josh evaluates — such as budget, timing, decision-maker engagement, and project clarity — to assign a Deal Quality tier to each opportunity.
 
 ---
 
@@ -234,8 +232,8 @@ A trigger signal is a specific reason to reach out now — e.g. a funding round,
 
 **Step 5 — Second conversation. Clear intent to move forward.**
 - Set Lifecycle Stage → Opportunity
-- Now create the deal. Enter pipeline at Qualification.
-- Score the Deal Quality using the Lead Scoring Matrix.
+- Now create the deal. Enter pipeline at Call with Leadership.
+- Score the Deal Quality using the [Lead Scoring Matrix](https://docs.google.com/spreadsheets/d/1ym6Csd1KzLWKICdZYn_E4KZQOvAvTd7gzXQT8mCh3j8/edit?gid=0#gid=0).
 
 💡 The rule: No deal until Opportunity. A deal represents an active commercial conversation with confirmed intent — not just a promising contact.
 
@@ -280,8 +278,8 @@ These are active project inquiries — they enter HubSpot as MQL (same logic as 
 
 **Fit confirmed:**
 1. Update Lifecycle Stage → Opportunity
-2. Create a deal (enters pipeline at Qualification or Discovery)
-3. Score the Deal Quality using the Lead Scoring Matrix
+2. Create a deal (enters pipeline at Call with Leadership or Discovery)
+3. Score the Deal Quality using the [Lead Scoring Matrix](https://docs.google.com/spreadsheets/d/1ym6Csd1KzLWKICdZYn_E4KZQOvAvTd7gzXQT8mCh3j8/edit?gid=0#gid=0)
 
 **Not a fit:**
 1. Set ICP Tier → Not our ICP on the company record
@@ -327,8 +325,8 @@ See Tier System section for full tier definitions.
 ### Step 5 — After the call
 **Fit confirmed:**
 1. Update Lifecycle Stage → Opportunity
-2. Create a deal (enters pipeline at Qualification or Discovery)
-3. Score the Deal Quality using the Lead Scoring Matrix
+2. Create a deal (enters pipeline at Call with Leadership or Discovery)
+3. Score the Deal Quality using the [Lead Scoring Matrix](https://docs.google.com/spreadsheets/d/1ym6Csd1KzLWKICdZYn_E4KZQOvAvTd7gzXQT8mCh3j8/edit?gid=0#gid=0)
 
 **Not a fit:**
 1. Set ICP Tier → Not our ICP on the company record
@@ -344,12 +342,12 @@ See Tier System section for full tier definitions.
 3. In the Deals panel, click + Add
 4. Name = company name only (e.g. "Acme")
 5. Pipeline = New Business
-6. Stage = Qualification (or Discovery if Jake is skipped)
+6. Stage = Call with Leadership (or Discovery if Jake is skipped)
 7. Set Deal Type — New Business or Existing Business
 8. Set Channel — Outbound, Inbound, or Client Expansion
 9. Fill required properties for the stage
 10. Click Create deal
-11. Score the Deal Quality using the Lead Scoring Matrix
+11. Score the Deal Quality using the [Lead Scoring Matrix](https://docs.google.com/spreadsheets/d/1ym6Csd1KzLWKICdZYn_E4KZQOvAvTd7gzXQT8mCh3j8/edit?gid=0#gid=0)
 
 Sean creates outbound deals. Josh creates inbound deals.
 
@@ -438,6 +436,5 @@ Open the contact record > in the left sidebar, find "Contact owner" > click the 
 
 ## TO BE DECIDED (no answers yet — team discussion needed)
 
-- **Qualification stage name**: Agree on a new name that is channel-agnostic and doesn't reference Jake specifically. Options: Intro Call, Initial Meeting, First Call.
 - **Inbound form updates**: Two open questions — (1) add a Company Name field to the form so HubSpot can auto-associate contacts to companies, or handle association manually post-submission? (2) Add self-reported attribution field to the form now or later?
 - **Lead Intake stage**: Needs to be reviewed and removed once lifecycle stage migration is complete. Agree on timing and confirm no deals remain before removing.
