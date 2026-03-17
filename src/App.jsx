@@ -418,8 +418,8 @@ function FlyingUnicorn({ onDone }) {
 
 // --- Markdown rendering ---
 function renderMarkdown(text) {
-  // Rejoin markdown links that got split across lines
-  text = text.replace(/\[([^\]]+)\]\(\s*\n\s*/g, "[$1](").replace(/\]\(\s+/g, "](");
+  // Rejoin markdown links that got split across lines (handles ] and ( on separate lines)
+  text = text.replace(/\[([^\]]+)\]\s*\n\s*\(/g, "[$1](").replace(/\[([^\]]+)\]\(\s*\n\s*/g, "[$1](").replace(/\]\(\s+/g, "](");
   const lines = text.split("\n");
   const elements = [];
   let i = 0;
