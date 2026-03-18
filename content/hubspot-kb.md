@@ -51,7 +51,7 @@ Lifecycle stages live at the contact level and reflect where someone is in the r
 
 Deals are created when a contact becomes an Opportunity. All deals enter at Call with Leadership by default (or Discovery if Jake is skipped).
 
-- **Call with Leadership**: First point of entry for all new deals. Introductory call with company leadership to assess fit and strategic alignment. Sometimes skipped on inbound — deals enter Discovery directly. Required: Deal Quality, Channel, Deal Source, Amount.
+- **Call with Leadership**: First point of entry for all new deals. Call with Leadership to assess fit and strategic alignment. Sometimes skipped on inbound — deals enter Discovery directly. Required: Deal Quality, Channel, Deal Source, Amount.
 - **Discovery/Scoping**: Deep dive on requirements, solution design, scoping. Jake may be skipped and deals enter here directly. Required: Deal Quality, Channel, Deal Source, Amount, Close Date.
 - **Proposal**: Proposal created and sent, reviewing terms. Required: Deal Quality, Channel, Deal Source, Amount, Close Date.
 - **Negotiation**: Discussing pricing/terms, working through objections. No required properties (intentional).
