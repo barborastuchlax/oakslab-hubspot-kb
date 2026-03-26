@@ -152,15 +152,47 @@ A deal is only created when the contact reaches Opportunity stage.
 
 ## HOW TO: SYNC FROM CLAY (OUTBOUND)
 
-Clay syncs directly to HubSpot via its built-in **Lookup Object**, **Update Object**, and **Create Object** columns. No CSV exports or manual imports needed. The process lives in a Clay workbook called **"List of ICPs"** and runs in two parts: companies first, then contacts.
+Clay is used to build a filtered list of ICP companies and their key contacts, then sync that data into HubSpot for outreach. The entire process lives in a Clay workbook called **"List of ICPs"** and is split into four parts: company filtering, contact filtering, syncing companies, and syncing contacts.
 
-### Part 1 — Syncing companies to HubSpot
+### Part 1 — Company Filtering
+
+Starting point: the **Overview** sheet within the List of ICPs workbook.
+
+**Initial filter criteria:**
+- 51–1,000 employees
+- Raised at least $10M
+- Privately held
+- Located in the US
+
+**Tech stack filter:** The **Find Technology Stack** column searches current and past job descriptions on each company's domain to identify technologies. Two derived columns check for React (Yes/No) and Node.js (Yes/No). The table is filtered to only include companies where both are Yes — OAK'S LAB builds with React and Node.js.
+
+### Part 2 — Contact Filtering (List of CTOs/CPOs)
+
+**People filter:** Finds contacts at filtered companies matching specific titles.
+
+**Included titles:** CTO, CPO, CPTO, CTPO, Chief Technology Officer, Chief Product Officer, Chief Technology and Product Officer, Chief Product and Technology Officer, VP Engineering, VP of Engineering, Director of Engineering.
+
+**Excluded titles:** Administrative Assistant, Executive Assistant, Field CTO, Field Chief Technology Officer.
+
+**Location:** United States only.
+
+**Cross-reference back to companies:** A column in the companies table filters to only keep companies where a matching US-based CTO/CPO record was found.
+
+**Additional enrichments (on companies):**
+- **Number of software engineering roles in US** — counts US-based engineering headcount
+- **Deal Room Funding Data** — pulls latest funding date, round type, and amount
+
+**ICP Tier classification:** An AI agent column evaluates each company based on US engineering headcount and funding stage, and assigns: Tier 1, Tier 2, Tier 3, or Not our ICP. Tier definitions are documented in the Company Tier vs Deal Tier framework section above.
+
+**Industry classification:** An AI agent column re-classifies each company's industry based on actual company details, because Clay's default industry field is often too broad or inaccurate.
+
+### Part 3 — Syncing Companies to HubSpot
 
 1. **Check if company already exists:** Run the **Lookup Object** column to search HubSpot for each company.
 2. **Update existing companies:** For companies where Lookup Object returned a result, run the **Update Object** column. Click Edit Column to see which fields are being updated.
 3. **Create new companies:** Filter the table to only show companies where Lookup Object returned **no results**, then run the **Create Object** column.
 
-⚠️ **CRITICAL:** Always filter to Lookup Object = no results before running Create Object. Skipping this creates duplicates.
+**CRITICAL:** Always filter to Lookup Object = no results before running Create Object. Skipping this creates duplicates.
 
 **Company fields — Create Object:**
 - Company Name (required)
@@ -174,34 +206,25 @@ Clay syncs directly to HubSpot via its built-in **Lookup Object**, **Update Obje
 - Last Funding Date
 - Company Owner
 - Tech Stack
-- Ideal Customer Profile Tier (AI-classified in Clay: Tier 1, 2, 3, or Not our ICP)
+- Ideal Customer Profile Tier (AI-classified in Clay)
 - LinkedIn Company Page (needed for outbound workflows)
 - Number of US Engineers (custom property — needed for ICP scoring)
 
 **Company fields — Update Object:**
-- Description
-- Industry
-- City
-- Country
-- Funding Stage
-- Last Funding Amount
-- Last Funding Date
-- Company Owner
-- Tech Stack
-- Ideal Customer Profile Tier
+- Description, Industry, City, Country, Funding Stage, Last Funding Amount, Last Funding Date, Company Owner, Tech Stack, Ideal Customer Profile Tier
 
 **Not currently synced but should be added:** Number of Employees (needed for lead scoring — Company Tier framework), Lead Source Category = Outbound (critical for attribution — without this, outbound contacts look like inbound in reporting).
 
-### Part 2 — Syncing contacts to HubSpot
+### Part 4 — Syncing Contacts to HubSpot
 
 1. **Find email:** Run the **Find Email** column to retrieve email addresses.
 2. **Validate email:** Run the **Zero Bounce** enrichment to validate each email.
-3. **Check domain match:** Verify each email domain matches the company domain. Domain matches proceed with bulk sync below. Domain mismatches must be uploaded manually, one by one.
+3. **Check domain match:** Verify each email domain matches the company domain. Domain matches proceed with bulk sync. Domain mismatches must be uploaded manually, one by one.
 4. **Check if contact already exists:** Run the **Lookup Object** column.
 5. **Update existing contacts:** For contacts where Lookup Object returned a result, run **Update Object**.
 6. **Create new contacts:** Filter to Lookup Object = no results, then run **Create Object**.
 
-⚠️ **CRITICAL:** Same rule as companies — always filter before running Create Object to prevent duplicates.
+**CRITICAL:** Same rule as companies — always filter before running Create Object to prevent duplicates.
 
 **Contact fields — Create Object:**
 - First Name (required)
@@ -214,11 +237,7 @@ Clay syncs directly to HubSpot via its built-in **Lookup Object**, **Update Obje
 - Lead Source Category = Outbound (critical for attribution tracking)
 
 **Contact fields — Update Object:**
-- Email
-- Job Title
-- City
-- Company Name
-- LinkedIn Profile
+- Email, Job Title, City, Company Name, LinkedIn Profile
 
 **Do NOT set on import:**
 - Lifecycle Stage — must stay empty until a real trigger signal exists (form fill, meeting booked). Setting on creation skips stages and breaks funnel reporting.
@@ -226,11 +245,19 @@ Clay syncs directly to HubSpot via its built-in **Lookup Object**, **Update Obje
 
 ### After the sync — QA checklist
 
-1. Spot-check 5–10 contact records for correct company association
-2. Verify Industry field is populated correctly (not blank)
-3. Confirm Lead Source Category = Outbound on new records
-4. Check for orphaned contacts (personal emails or domain mismatches)
-5. Verify Lifecycle Stage and Lead Status are empty on new imports
+- Spot-check 5-10 contact records for correct company association
+- Verify Industry field is populated correctly (not blank)
+- Confirm Lead Source Category = Outbound on new records
+- Check for orphaned contacts (personal emails or domain mismatches)
+- Verify Lifecycle Stage and Lead Status are empty on new imports
+
+### Common mistakes
+
+- **Creating duplicates** — always filter out existing records (Lookup Object = no results) before running Create Object, for both companies and contacts
+- **Skipping domain match check** — contacts whose email doesn't match the company domain need to be uploaded manually
+- **Setting Lifecycle Stage on import** — breaks funnel reporting if stages are skipped
+- **Industry values not matching HubSpot dropdowns** — HubSpot silently drops non-matching values, company shows up with no industry
+
 
 ## HOW TO: MOVE OUTBOUND CONTACTS THROUGH STAGES
 
