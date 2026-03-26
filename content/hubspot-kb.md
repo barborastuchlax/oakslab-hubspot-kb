@@ -80,10 +80,12 @@ The ICP Tier lives at the company level. It reflects how well a company matches 
 
 Who sets it: Sean sets it on outbound import. Josh sets it when qualifying an inbound lead.
 
-- **Tier 1 â Ideal fit**: ALL must be true: Series AâD, US-based engineering team with identifiable CTO/CPO, 10â50 engineers, confirmed or strongly implied openness to external engineering partners. â Prioritise immediately.
-- **Tier 2 â Strong fit, one unknown**: Most Tier 1 boxes ticked â engineering team size unclear or slightly outside sweet spot, or openness to external partners unconfirmed. â Worth pursuing, not at expense of Tier 1.
-- **Tier 3 â Partial fit, longer term play**: One or more of: Series AâD but engineering team largely offshore; very small team; happy with current dev partner at higher price point (potential to switch); interesting company but stage or team size not yet right; haven't partnered with an offshore partner but open to it. â Deprioritise â monitor for growth.
-- **Not our ICP â Clear mismatch**: Any one of: bootstrapped with no funding path visible; pre-product or idea stage; consumer-facing product with no enterprise or compliance angle; previously contacted and explicitly declined; non-US company with no US engineering leadership. â Do not pursue.
+- **Tier 1 — Ideal fit**: ALL must be true: Seed, Series A, Series B, Series C, Series D, Early VC, or Late VC; US-based engineering team with identifiable CTO/CPO; 10–70 engineers (inclusive); Openness to External Partners = "Yes". → Prioritise immediately.
+- **Tier 2 — Strong fit, one unknown**: Most Tier 1 boxes ticked but not all. Criteria: Seed, Series A, Series B, Series C, Series D, Early VC, Late VC, or Unknown; US-based engineering team with identifiable CTO/CPO; 10–70 engineers (inclusive); Openness to External Partners = "Unknown". Note: if a company meets all Tier 1 criteria but Openness to External Partners is "Unknown", it drops to Tier 2. → Worth pursuing, not at expense of Tier 1.
+- **Tier 3 — Partial fit, longer term play**: One or more of: Seed, Series A, Series B, Series C, Series D, Early VC, Late VC, or Unknown; fewer than 9 or more than 71 engineers in US. Additional factors not tracked in Clay but considered when known: happy with current dev partner at higher price point than OAK'S LAB (potential to switch); haven't partnered with an offshore partner but open to it. → Deprioritise — monitor for growth.
+- **Not our ICP — Clear mismatch**: Any one of these is true: is NOT one of the accepted funding stages (Seed, Series A, Series B, Series C, Series D, Early VC, Late VC, or Unknown); consumer-facing product with no enterprise or compliance angle. → Do not pursue.
+- **Disqualified**: Previously contacted and explicitly declined (not just being fobbed off); non-US company with no US engineering leadership; other factors that mean they will very unlikely want to work with us or we don't want to work with them. → Do not pursue.
+
 
 ### Deal Quality (Deal level)
 The Deal Quality lives at the deal level. It reflects opportunity quality â scored independently by Josh after the qualification call, using the [Lead Scoring Matrix](https://docs.google.com/spreadsheets/d/1ym6Csd1KzLWKICdZYn_E4KZQOvAvTd7gzXQT8mCh3j8/edit?gid=0#gid=0).
