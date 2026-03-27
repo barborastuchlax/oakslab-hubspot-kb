@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OAK'S LAB — HubSpot CRM Logic & BD Training Guide</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f9fa; color: #1a1a1a; line-height: 1.6; padding: 2rem; max-width: 900px; margin: 0 auto; }
+  h1 { font-size: 1.6rem; margin-bottom: 0.25rem; }
+  h2 { font-size: 1.2rem; margin: 2.5rem 0 0.75rem; padding-bottom: 0.4rem; border-bottom: 2px solid #e0e0e0; }
+  h3 { font-size: 1rem; margin: 1.25rem 0 0.5rem; }
+  h4 { font-size: 0.9rem; margin: 1rem 0 0.4rem; color: #444; }
+  .subtitle { color: #666; font-size: 0.9rem; margin-bottom: 2rem; }
+
+  .card { background: #fff; border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; border-left: 4px solid #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .card p, .card li { font-size: 0.88rem; color: #333; }
+  .card ul, .card ol { padding-left: 1.25rem; margin-top: 0.4rem; }
+  .card li { margin-bottom: 0.3rem; }
+  .card h3 { margin-top: 0; font-size: 0.95rem; }
+
+  .card-default { border-left-color: #bdc3c7; }
+  .card-green { border-left-color: #27ae60; }
+  .card-blue { border-left-color: #3498db; }
+  .card-orange { border-left-color: #f39c12; }
+  .card-red { border-left-color: #e74c3c; }
+  .card-purple { border-left-color: #8e44ad; }
+  .card-teal { border-left-color: #1abc9c; }
+
+  .tag { display: inline-block; font-size: 0.68rem; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin-left: 0.5rem; vertical-align: middle; }
+  .tag-new { background: #eafaf1; color: #1e8449; }
+  .tag-tbd { background: #fef5e7; color: #d68910; }
+  .tag-auto { background: #eaf2fa; color: #2471a3; }
+  .tag-manual { background: #f4ecf7; color: #7d3c98; }
+
+  table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.85rem; }
+  th { background: #f0f0f0; text-align: left; padding: 0.5rem 0.75rem; font-weight: 600; font-size: 0.8rem; }
+  td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #eee; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+
+  .detail { background: #f4f4f4; border-radius: 6px; padding: 0.75rem 1rem; margin-top: 0.5rem; font-size: 0.85rem; color: #444; }
+  .detail code { background: #e8e8e8; padding: 1px 5px; border-radius: 3px; font-size: 0.82rem; }
+  code { background: #eee; padding: 1px 5px; border-radius: 3px; font-size: 0.84rem; }
+
+  .warning { background: #fef9e7; border-left: 4px solid #f39c12; border-radius: 6px; padding: 0.75rem 1rem; margin: 0.75rem 0; font-size: 0.85rem; }
+  .tip { background: #eafaf1; border-left: 4px solid #27ae60; border-radius: 6px; padding: 0.75rem 1rem; margin: 0.75rem 0; font-size: 0.85rem; }
+  .rule { background: #fdecea; border-left: 4px solid #e74c3c; border-radius: 6px; padding: 0.75rem 1rem; margin: 0.75rem 0; font-size: 0.85rem; font-weight: 600; }
+
+  .section-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #999; margin: 2rem 0 0.5rem; }
+
+  .toc { background: #fff; border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .toc ol { padding-left: 1.25rem; }
+  .toc li { font-size: 0.88rem; margin-bottom: 0.25rem; }
+  .toc a { color: #2471a3; text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+
+  footer { margin-top: 3rem; text-align: center; font-size: 0.78rem; color: #aaa; padding-top: 1.5rem; border-top: 1px solid #e0e0e0; }
+</style>
+</head>
+<body>
+
+<h1>OAK'S LAB — HubSpot CRM Logic & BD Training Guide</h1>
+<p class="subtitle">Last updated: March 2026 · Owner: BD Department</p>
+
+<div class="toc">
+  <strong>Contents</strong>
+  <ol>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#lifecycle">Lifecycle Stages</a></li>
+    <li><a href="#pipeline">Deal Pipeline</a></li>
+    <li><a href="#workflows">Workflows & Automation</a></li>
+    <li><a href="#legacy">Legacy Contacts & Companies</a></li>
+    <li><a href="#tiers">Tier System</a></li>
+    <li><a href="#howto">BD Team: How to Use HubSpot Day-to-Day</a></li>
+    <li><a href="#scenarios">Common Scenarios & Edge Cases</a></li>
+    <li><a href="#faq">Frequently Asked Questions</a></li>
+    <li><a href="#tips">General HubSpot Tips</a></li>
+    <li><a href="#tbd">To Be Discussed & Decided</a></li>
+  </ol>
+</div>
+
+<!-- ===== 1. OVERVIEW ===== -->
+<h2 id="overview">1. Overview</h2>
+
+<div class="card card-default">
+  <p>OAK'S LAB uses HubSpot to manage all business development activity. The CRM tracks two parallel objects:</p>
+  <ul>
+    <li><strong>Contacts</strong> — individuals moving through the sales process (lifecycle stages). Every contact must be associated to a Company in HubSpot. Companies hold firmographic data (industry, size, funding, etc.) and are the account-level record that contacts sit under.</li>
+    <li><strong>Deals</strong> — active opportunities with a defined pipeline and stage.</li>
+  </ul>
+  <p style="margin-top:0.5rem;">Lifecycle stages and deal stages are separate but connected. A deal is only created when a contact reaches Opportunity status.</p>
+</div>
+
+<!-- ===== 2. LIFECYCLE STAGES ===== -->
+<h2 id="lifecycle">2. Lifecycle Stages</h2>
+
+<p style="margin-bottom:1rem; font-size:0.9rem;">Lifecycle stages live at the contact level and reflect where someone is in the relationship with OAK'S LAB. We have two tracks depending on how the lead originated.</p>
+
+<h3>Inbound Track</h3>
+<div class="card card-green">
+  <table>
+    <tr><th>Stage</th><th>Definition</th><th>Level</th><th>How Assigned</th></tr>
+    <tr><td><strong>Lead</strong></td><td>Inbound form submission (non-Talk to Sales)</td><td>Contact</td><td>Automatic via workflow</td></tr>
+    <tr><td><strong>MQL</strong></td><td>Talk to Sales form submission, direct meeting booking with Josh, or Clutch direct contact (manual)</td><td>Contact</td><td>Automatic on form fill or meeting booked; manual by Josh for Clutch</td></tr>
+    <tr><td><strong>SQL</strong></td><td>Josh has reviewed the contact, accepted them as worth pursuing, and a call is scheduled. Counts as SQL because sales has pre-qualified the lead before speaking to them.</td><td>Contact</td><td>Manual by sales</td></tr>
+    <tr><td><strong>Opportunity</strong></td><td>Josh has taken the first call, fit is confirmed, and there is reason to continue. Deal is created and enters the pipeline at Call with Leadership (or Discovery if Jake is skipped).</td><td>Contact + Deal</td><td>Manual by sales → deal created</td></tr>
+    <tr><td><strong>Customer</strong></td><td>Associated deal is marked Closed Won</td><td>Deal</td><td>Automatic</td></tr>
+  </table>
+</div>
+
+<h3>Outbound Track</h3>
+<div class="card card-blue">
+  <table>
+    <tr><th>Stage</th><th>Definition</th><th>Level</th><th>How Assigned</th></tr>
+    <tr><td><strong>Empty / no stage</strong></td><td>Contact imported into HubSpot — no trigger signal yet</td><td>Contact</td><td>—</td></tr>
+    <tr><td><strong>Lead</strong></td><td>A trigger exists that makes this company worth contacting — e.g. funding round, hiring signal, leadership change</td><td>Contact</td><td>Manual during import or prospecting</td></tr>
+    <tr><td><strong>MQL</strong></td><td>Contact has responded positively to outreach and a call is booked</td><td>Contact</td><td>Manual by sales on positive reply</td></tr>
+    <tr><td><strong>SQL</strong></td><td>The first call with Sean has happened. Fit and budget have been confirmed — this is something worth spending time on.</td><td>Contact</td><td>Manual by sales post-first call</td></tr>
+    <tr><td><strong>Opportunity</strong></td><td>A second conversation has happened with clear intent to move forward, or enough information has been exchanged after the first call. Deal created, enters pipeline at Call with Leadership.</td><td>Contact + Deal</td><td>Manual by sales → deal created</td></tr>
+    <tr><td><strong>Customer</strong></td><td>Associated deal is marked Closed Won</td><td>Deal</td><td>Automatic</td></tr>
+  </table>
+</div>
+
+<h3>Key Differences: Inbound vs. Outbound</h3>
+<div class="card card-default">
+  <table>
+    <tr><th></th><th>Inbound</th><th>Outbound</th></tr>
+    <tr><td><strong>First stage</strong></td><td>Lead (automated)</td><td>Empty / no stage → Lead (manual)</td></tr>
+    <tr><td><strong>SQL moment</strong></td><td>Before first call — Josh pre-qualifies</td><td>After first call — Sean confirms fit</td></tr>
+    <tr><td><strong>MQL trigger</strong></td><td>Form fill or meeting booked</td><td>Positive reply to outreach</td></tr>
+    <tr><td><strong>Deal creation</strong></td><td>At Opportunity, after Josh's first call</td><td>At Opportunity, after second conversation with Sean</td></tr>
+  </table>
+</div>
+
+<!-- ===== 3. DEAL PIPELINE ===== -->
+<h2 id="pipeline">3. Deal Pipeline</h2>
+
+<p style="margin-bottom:0.5rem; font-size:0.9rem;">Deals are created when a contact becomes an Opportunity. All deals enter the pipeline at Call with Leadership by default (or Discovery if Jake is skipped).</p>
+
+<div class="card card-default">
+  <table>
+    <tr><th>Stage</th><th>Definition</th><th>Required Properties</th></tr>
+    <tr><td><strong>Call with Leadership</strong></td><td>First point of entry for all new deals. Introductory call with company leadership to assess fit and strategic alignment. Sometimes skipped on inbound — deals enter Discovery directly.</td><td>Deal Quality, Channel, Deal Source, Amount</td></tr>
+    <tr><td><strong>Discovery / Scoping</strong></td><td>Deep dive on requirements, solution design, scoping. Jake may be skipped and deals enter here directly.</td><td>Deal Quality, Channel, Deal Source, Amount, Close Date</td></tr>
+    <tr><td><strong>Proposal</strong></td><td>Proposal created and sent, reviewing terms</td><td>Deal Quality, Channel, Deal Source, Amount, Close Date</td></tr>
+    <tr><td><strong>Negotiation</strong></td><td>Discussing pricing / terms, working through objections</td><td>— (intentional)</td></tr>
+    <tr><td><strong>Contract</strong></td><td>Legal review, contract signature pending</td><td>— (intentional)</td></tr>
+    <tr><td><strong>Closed Won</strong></td><td>Deal signed</td><td>Closed Won Reason</td></tr>
+    <tr><td><strong>Closed Lost</strong></td><td>Not moving forward</td><td>Loss reason (required)</td></tr>
+    <tr><td><strong>Nurture</strong></td><td>Good fit but not ready now — 6+ month timeline. Kept visible, actively followed up.</td><td>Nurture Reason (required)</td></tr>
+  </table>
+</div>
+
+<h4>Nurture Reason dropdown options</h4>
+<div class="card card-default">
+  <p>Budget · Internal priorities shifted · Market conditions · Building stakeholder buy-in · Relationship building — not ready yet · Timing · Decision maker not engaged · Fundraising · Other</p>
+</div>
+
+<h4>Deal stage notes</h4>
+<div class="card card-default">
+  <ul>
+    <li><strong>Nurture is not a dead end</strong> — it is an active stage with automated follow-ups at 2, 4, and 6 months. If nothing changes after 6 months, the deal is automatically moved to Closed Lost.</li>
+    <li>Loss reason is required on Closed Lost.</li>
+    <li>Deals can skip Call with Leadership and enter at Discovery in two cases: (1) inbound leads where Josh handles the first call and Jake is not needed, (2) outbound deals where enough context exists from prior calls.</li>
+    <li>Negotiation and Contract have no required properties — this is intentional. Closed Won requires a Closed Won Reason.</li>
+  </ul>
+  <div class="tip">Always fill required properties. Keep close date up to date. Add notes after every significant interaction.</div>
+</div>
+
+<!-- ===== 4. WORKFLOWS ===== -->
+<h2 id="workflows">4. HubSpot Workflows & Automation</h2>
+
+<h3>Native Automations (not workflows)</h3>
+<div class="card card-default">
+  <p>Set directly in Settings → Objects → Contacts → Lifecycle Stages → Automate. Apply to all contacts and companies regardless of source.</p>
+  <table>
+    <tr><th>Setting</th><th>Status</th><th>Value</th></tr>
+    <tr><td>Sync lifecycle stages</td><td>✅ On</td><td>Contact ↔ Company stages stay in sync</td></tr>
+    <tr><td>Set stage when contact/company is created</td><td>⬜ Off</td><td>—</td></tr>
+    <tr><td>Set stage when a deal is created</td><td>✅ On</td><td>→ Opportunity</td></tr>
+    <tr><td>Set stage when a deal is won</td><td>✅ On</td><td>→ Customer</td></tr>
+    <tr><td>Set stage when a lead is associated</td><td>✅ On</td><td>→ Lead</td></tr>
+  </table>
+  <div class="detail"><strong>Why is "Set stage when contact/company is created" off?</strong> This native setting would apply to ALL new contacts regardless of source — it cannot distinguish between inbound and outbound. Inbound contacts should start as Lead, while outbound contacts should start with an empty lifecycle stage. This logic is handled by WF-01 (inbound) and WF-05 (outbound) instead, which use source-based filters to assign the correct starting stage.</div>
+</div>
+
+<h3>Workflow Overview</h3>
+<p style="font-size:0.88rem; margin-bottom:1rem;">All workflows activated week of 9 March 2026.</p>
+
+<!-- WF-01 -->
+<div class="card card-green">
+  <h3>WF-01 — Assign Lead stage to new inbound contacts (source-based) <span class="tag tag-auto">AUTO</span></h3>
+  <p><strong>Purpose:</strong> Catch-all workflow that sets lifecycle stage to Lead for any new inbound contact, based on original source.</p>
+  <table>
+    <tr><td><strong>Object</strong></td><td>Contact</td></tr>
+    <tr><td><strong>Status</strong></td><td>✅ ON</td></tr>
+    <tr><td><strong>Trigger</strong></td><td>Records meet custom conditions</td></tr>
+    <tr><td><strong>Enrollment filters</strong></td><td>Create date is after 03/01/2026 <strong>and</strong> Original Source is any of: Organic Search, AI Referrals, Paid Search, Organic Social, Email Marketing, Other Campaigns, Direct Traffic, Paid Social, Referrals <strong>and</strong> Lifecycle stage is none of: MQL, SQL, Opportunity, Customer <strong>and</strong> Form submission has not filled out <code>#wf-form-let-s-talk-form</code> on any page</td></tr>
+    <tr><td><strong>Action 1</strong></td><td>Set Lifecycle Stage → Lead</td></tr>
+    <tr><td><strong>Action 2</strong></td><td>Set Lead Source Category → Inbound</td></tr>
+    <tr><td><strong>Re-enroll</strong></td><td>Off</td></tr>
+  </table>
+  <div class="warning">⚠️ The Original Source filter uses an explicit allowlist. If HubSpot introduces a new source type in the future, it will not be caught automatically — check and update the allowlist periodically.</div>
+</div>
+
+<!-- WF-02 -->
+<div class="card card-green">
+  <h3>WF-02 — Assign MQL stage on Talk to Sales form or meeting booking <span class="tag tag-auto">AUTO</span></h3>
+  <p><strong>Purpose:</strong> When a contact submits the Talk to Sales form or books a meeting with Josh, automatically mark them as MQL, tag their lead source as Inbound, assign to Josh, and create a task for review.</p>
+  <table>
+    <tr><td><strong>Object</strong></td><td>Contact</td></tr>
+    <tr><td><strong>Status</strong></td><td>✅ ON</td></tr>
+    <tr><td><strong>Trigger</strong></td><td>Form submission completed any number of times — Form name is any of <code>#wf-form-let-s-talk-form</code> or Meetings Link: <code>josh-urban</code></td></tr>
+    <tr><td><strong>Enrollment filter</strong></td><td>Last contacted is unknown</td></tr>
+    <tr><td><strong>Action 1</strong></td><td>Set as marketing contact</td></tr>
+    <tr><td><strong>Action 2</strong></td><td>Set Lifecycle Stage → Marketing Qualified Lead</td></tr>
+    <tr><td><strong>Action 3</strong></td><td>Set Lead Source Category → Inbound</td></tr>
+    <tr><td><strong>Action 4</strong></td><td>Rotate contact to 1 owner (Josh Urban)</td></tr>
+    <tr><td><strong>Action 5</strong></td><td>Create task: "New Inbound Lead - Check" — assigned to Barbora Stuchlá (informative only)</td></tr>
+    <tr><td><strong>Re-enroll</strong></td><td>Off</td></tr>
+    <tr><td><strong>Backfill</strong></td><td>Yes — enroll contacts who currently meet criteria when workflow is turned on</td></tr>
+  </table>
+</div>
+
+<!-- WF-03 -->
+<div class="card card-green">
+  <h3>WF-03 — Assign Lead stage on inbound form submission (non-Talk to Sales) <span class="tag tag-auto">AUTO</span></h3>
+  <p><strong>Purpose:</strong> When a contact submits any inbound form other than the Talk to Sales form, set their lifecycle stage to Lead and tag their lead source as Inbound.</p>
+  <table>
+    <tr><td><strong>Object</strong></td><td>Contact</td></tr>
+    <tr><td><strong>Status</strong></td><td>✅ ON</td></tr>
+    <tr><td><strong>Trigger</strong></td><td>Form submission completed any number of times — Form name is any of <code>#wf-form-about-form</code>, <code>#wf-form-form-footer-newsletter .footer-form</code></td></tr>
+    <tr><td><strong>Action 1</strong></td><td>Set as marketing contact</td></tr>
+    <tr><td><strong>Action 2</strong></td><td>Set Lifecycle Stage → Lead</td></tr>
+    <tr><td><strong>Action 3</strong></td><td>Set Lead Source Category → Inbound</td></tr>
+    <tr><td><strong>Action 4</strong></td><td>Create task: "New Inbound Lead - Check" — assigned to Barbora Stuchlá</td></tr>
+    <tr><td><strong>Re-enroll</strong></td><td>Off</td></tr>
+  </table>
+</div>
+
+<!-- WF-04 -->
+<div class="card card-green">
+  <h3>WF-04 — Notify Josh on new inbound MQL <span class="tag tag-auto">AUTO</span></h3>
+  <p><strong>Purpose:</strong> When a contact submits the Talk to Sales form or books a meeting with Josh, alert Josh immediately so he can research the lead and follow up promptly.</p>
+  <table>
+    <tr><td><strong>Object</strong></td><td>Contact</td></tr>
+    <tr><td><strong>Status</strong></td><td>✅ ON</td></tr>
+    <tr><td><strong>Trigger</strong></td><td>Form submission completed any number of times — Form name is any of <code>#wf-form-let-s-talk-form</code> or Meetings Link: <code>josh-urban</code></td></tr>
+    <tr><td><strong>Action 1</strong></td><td>Send Slack notification to channel or user</td></tr>
+    <tr><td><strong>Action 2</strong></td><td>Create task: "Research and follow-up with the new MQL (Josh)" — assigned to Josh Urban</td></tr>
+    <tr><td><strong>Re-enroll</strong></td><td>Off</td></tr>
+  </table>
+</div>
+
+<!-- WF-05 -->
+<div class="card card-blue">
+  <h3>WF-05 — Tag new outbound contacts with Lead Source Category = Outbound <span class="tag tag-auto">AUTO</span></h3>
+  <p><strong>Purpose:</strong> Automatically tag any contact imported or manually created in HubSpot as Outbound, so lead source reporting is clean from day one.</p>
+  <table>
+    <tr><td><strong>Object</strong></td><td>Contact</td></tr>
+    <tr><td><strong>Status</strong></td><td>✅ ON</td></tr>
+    <tr><td><strong>Trigger</strong></td><td>Records meet custom conditions</td></tr>
+    <tr><td><strong>Enrollment filters</strong></td><td>Original Source is any of: Offline Sources <strong>and</strong> Legacy Contact is none of: Yes</td></tr>
+    <tr><td><strong>Action 1</strong></td><td>Set Lead Source Category → Outbound</td></tr>
+    <tr><td><strong>Re-enroll</strong></td><td>Off</td></tr>
+  </table>
+</div>
+
+<!-- WF-06 -->
+<div class="card card-orange">
+  <h3>WF-06 — Nurture reminders + auto close lost <span class="tag tag-auto">AUTO</span></h3>
+  <p><strong>Purpose:</strong> Keep Nurture deals actively monitored by sending escalating reminders to the deal owner and collaborator at 2, 4, and 6 months. If no action is taken after 6 months, the deal is automatically moved to Closed Lost.</p>
+  <table>
+    <tr><td><strong>Object</strong></td><td>Deal</td></tr>
+    <tr><td><strong>Status</strong></td><td>✅ ON</td></tr>
+    <tr><td><strong>Trigger</strong></td><td>Property value changed — Deal stage is any of: Nurture</td></tr>
+    <tr><td><strong>Re-enroll</strong></td><td>On</td></tr>
+  </table>
+  <p style="margin-top:0.5rem;"><strong>Sequence:</strong></p>
+  <table>
+    <tr><th>Step</th><th>Action</th></tr>
+    <tr><td>1</td><td>Delay 60 days</td></tr>
+    <tr><td>2</td><td>Send internal email — "2 months since [Deal Name] moved to Nurture" → Deal owner + Deal Collaborator</td></tr>
+    <tr><td>3</td><td>Delay 60 days</td></tr>
+    <tr><td>4</td><td>Send internal email — "4 months since [Deal Name] moved to Nurture" → Deal owner + Deal Collaborator</td></tr>
+    <tr><td>5</td><td>Delay 60 days</td></tr>
+    <tr><td>6</td><td>Send internal email — "6 months since [Deal Name] moved to Nurture" → Deal owner + Deal Collaborator</td></tr>
+    <tr><td>7</td><td>Delay 1 day</td></tr>
+    <tr><td>8</td><td>Set Deal pipeline and stage → Closed Lost</td></tr>
+  </table>
+</div>
+
+<!-- WF-07 -->
+<div class="card card-orange">
+  <h3>WF-07 — Closed Lost follow-up task <span class="tag tag-auto">AUTO</span></h3>
+  <p><strong>Purpose:</strong> When a deal is marked Closed Lost, notify the deal owner after 6 months and create a task to check back in.</p>
+  <table>
+    <tr><td><strong>Object</strong></td><td>Deal</td></tr>
+    <tr><td><strong>Status</strong></td><td>✅ ON</td></tr>
+    <tr><td><strong>Trigger</strong></td><td>Property value changed — Deal stage is any of: Lost</td></tr>
+    <tr><td><strong>Re-enroll</strong></td><td>Off</td></tr>
+  </table>
+  <p style="margin-top:0.5rem;"><strong>Sequence:</strong></p>
+  <table>
+    <tr><th>Step</th><th>Action</th></tr>
+    <tr><td>1</td><td>Delay 183 days</td></tr>
+    <tr><td>2</td><td>Send internal email — "Check back in with this deal, it's been 6 months since it's been marked as closed lost" → Deal owner</td></tr>
+    <tr><td>3</td><td>Create task — same message, due 3 business days after creation (Mon–Fri only)</td></tr>
+  </table>
+</div>
+
+<h3>Clutch Leads Note</h3>
+<div class="card card-purple">
+  <p>No workflow covers Clutch leads. They arrive as email notifications from <code>no-reply@clutch.co</code> directly to Josh. Josh manually creates the contact and company in HubSpot and sets the properties. See the <a href="#clutch">"How to Handle a Clutch Lead"</a> section below for the full process.</p>
+</div>
+
+<h3>A note on inbound forms</h3>
+<div class="card card-default">
+  <p>OAK'S LAB's website is built in Webflow. All forms on the site are Webflow forms — not native HubSpot forms. This means:</p>
+  <ul>
+    <li>Form mapping is handled via the native Webflow–HubSpot integration</li>
+    <li>Form submissions are sent to HubSpot via Zapier</li>
+    <li>In HubSpot, these forms show up as <strong>non-HubSpot forms</strong> — this is expected and not an error</li>
+    <li>Workflow triggers referencing form names (e.g. <code>#wf-form-let-s-talk-form</code>) refer to the Webflow form IDs as they appear in HubSpot after the integration maps them</li>
+  </ul>
+  <div class="warning">If a form stops triggering workflows, check the Zapier zap and the Webflow–HubSpot integration before investigating the workflow itself.</div>
+</div>
+
+<!-- ===== 5. LEGACY ===== -->
+<h2 id="legacy">5. Legacy Contacts & Companies</h2>
+
+<div class="card card-default">
+  <p>Legacy contacts are not deleted — they are marked as non-marketing contacts and hidden from default views. If a legacy contact re-engages, they automatically return to active status.</p>
+
+  <h4 style="margin-top:0.75rem;">A contact is marked Legacy if it meets any of the following:</h4>
+  <table>
+    <tr><th>Criteria</th><th>Definition</th><th>Est. Volume</th></tr>
+    <tr><td>No recent activity</td><td>Create date before 1 Jan 2025 and last activity date more than 365 days ago</td><td>~30,700</td></tr>
+    <tr><td>Do Not Contact</td><td>Lead status is marked as DO NOT CONTACT</td><td>~4,400</td></tr>
+    <tr><td>Hard bounce</td><td>Email hard bounce reason is known</td><td>~200</td></tr>
+    <tr><td>Deactivated owner</td><td>Contact owner is a deactivated user</td><td>~1,900</td></tr>
+  </table>
+
+  <p style="margin-top:0.75rem;"><strong>A company is marked Legacy if:</strong> all of its associated contacts are legacy contacts.</p>
+
+  <p style="margin-top:0.5rem;"><strong>Edge case:</strong> If a contact is imported after 1 March 2026 and merges with an existing contact → mark the original contact as Legacy = No.</p>
+</div>
+
+<!-- ===== 6. TIERS ===== -->
+<h2 id="tiers">6. Tier System</h2>
+
+<p style="margin-bottom:1rem; font-size:0.9rem;">OAK'S LAB uses two tier properties and one scoring matrix to evaluate fit and prioritise pipeline.</p>
+
+<h3>6.1 Ideal Customer Profile Tier (Company level)</h3>
+<div class="card card-default">
+  <p>The ICP Tier lives at the company level. It reflects how well a company matches OAK'S LAB's ideal customer profile. Set when a company is first imported or created, and reviewed at Call with Leadership stage.</p>
+  <p style="margin-top:0.5rem;"><strong>Who sets it:</strong> Sean sets it on outbound import. Josh sets it when qualifying an inbound lead.</p>
+  <table>
+    <tr><th>Tier</th><th>Label</th><th>Criteria</th><th>What happens</th></tr>
+    <tr><td><strong>Tier 1</strong></td><td>Ideal fit</td><td>ALL must be true: Series A–D, US-based engineering team with identifiable CTO/CPO, 10–50 engineers, confirmed or strongly implied openness to external engineering partners</td><td>Prioritise immediately</td></tr>
+    <tr><td><strong>Tier 2</strong></td><td>Strong fit, one unknown</td><td>Most Tier 1 boxes ticked — engineering team size unclear or slightly outside sweet spot, or openness to external partners unconfirmed</td><td>Worth pursuing, not at expense of Tier 1</td></tr>
+    <tr><td><strong>Tier 3</strong></td><td>Partial fit, longer term</td><td>One or more of: Series A–D but engineering team largely offshore; very small team; happy with current dev partner at higher price (potential to switch); interesting but stage or team size not yet right; haven't partnered offshore but open to it</td><td>Deprioritise — monitor</td></tr>
+    <tr><td><strong>Not our ICP</strong></td><td>Clear mismatch</td><td>Any one of: bootstrapped with no funding path; pre-product or idea stage; consumer-facing with no enterprise angle; previously contacted and explicitly declined; non-US company with no US engineering leadership</td><td>Do not pursue</td></tr>
+  </table>
+</div>
+
+<h3>6.2 Deal Quality (Deal level)</h3>
+<div class="card card-default">
+  <p>The Deal Quality lives at the deal level. It reflects opportunity quality — scored independently by Josh after the qualification call, using the <a href="https://docs.google.com/spreadsheets/d/1ym6Csd1KzLWKICdZYn_E4KZQOvAvTd7gzXQT8mCh3j8/edit?gid=0#gid=0" target="_blank">Lead Scoring Matrix</a>.</p>
+  <p style="margin-top:0.5rem;"><strong>Who sets it:</strong> Josh, after every qualification call.</p>
+  <p><strong>When:</strong> At or immediately after the Call with Leadership stage. Updated again at Discovery if new information changes the picture.</p>
+  <p style="margin-top:0.5rem;">The Deal Quality is scored <strong>independently</strong> from the Company ICP Tier — this is intentional. Scoring independently forces a critical assessment of each deal's actual quality rather than defaulting to the company's ICP fit. A Tier 1 company can have a Tier 2 deal if the decision maker isn't engaged or budget is unclear. A Tier 2 company can have a Tier 1 deal if timing and budget are both strong.</p>
+  <p style="margin-top:0.5rem;">📊 Refer to the <a href="https://docs.google.com/spreadsheets/d/1ym6Csd1KzLWKICdZYn_E4KZQOvAvTd7gzXQT8mCh3j8/edit?gid=0#gid=0" target="_blank">Lead Scoring Matrix</a> for the scoring criteria used to determine Deal Quality.</p>
+</div>
+
+<!-- ===== 7. HOW-TO ===== -->
+<h2 id="howto">7. BD Team: How to Use HubSpot Day-to-Day</h2>
+
+<h3>7.1 Outbound: Manually adding contacts and companies</h3>
+<div class="card card-default">
+  <p>Sometimes outbound contacts need to be created manually in HubSpot rather than imported from Clay — for example, when a conversation is already in progress or a contact has been sourced individually.</p>
+  <p style="margin-top:0.5rem;"><strong>Before creating a contact, always create or find their company first.</strong></p>
+
+  <h4>Step 1 — Find or create the company</h4>
+  <ol>
+    <li>Search HubSpot for the company name</li>
+    <li>If it exists, open it and proceed to create the contact from there</li>
+    <li>If it doesn't exist, create the company first: Company Name, Industry, Country/Region, City, LinkedIn Company Page</li>
+  </ol>
+
+  <h4>Step 2 — Create the contact</h4>
+  <p>Navigate to the company record and create the contact from there so the association is automatic.</p>
+  <table>
+    <tr><th>Property</th><th>Notes</th></tr>
+    <tr><td>First Name, Last Name</td><td>Required</td></tr>
+    <tr><td>Email</td><td>Required</td></tr>
+    <tr><td>Phone Number</td><td></td></tr>
+    <tr><td>Job Title</td><td></td></tr>
+    <tr><td>LinkedIn URL</td><td></td></tr>
+    <tr><td>Country/Region</td><td></td></tr>
+    <tr><td>City</td><td></td></tr>
+    <tr><td>Lead Source Category</td><td>Set to Outbound</td></tr>
+    <tr><td>Lifecycle Stage</td><td>Only set if there is a genuine trigger signal — otherwise leave empty</td></tr>
+    <tr><td>Contact Owner</td><td>Assign yourself or the relevant team member. Do not leave unassigned.</td></tr>
+  </table>
+
+  <h4>Step 3 — Do NOT create a deal</h4>
+  <p>A deal is only created when the contact reaches Opportunity stage.</p>
+</div>
+
+<h3>7.2 Outbound: Importing contacts from Clay</h3>
+<div class="card card-default">
+  <p>Imports are done in two separate files — companies first, then contacts.</p>
+
+  <h4>Part 1 — Setting up Clay correctly before export</h4>
+  <p><strong>Companies export — key fields:</strong></p>
+  <table>
+    <tr><th>Clay Field</th><th>Maps to HubSpot Property</th><th>Notes</th></tr>
+    <tr><td>Company Name</td><td>Company Name</td><td>Required</td></tr>
+    <tr><td>Industry</td><td>Industry</td><td>Must match HubSpot dropdown values</td></tr>
+    <tr><td>Number of Employees</td><td>Number of Employees</td><td></td></tr>
+    <tr><td>Country/Region</td><td>Country/Region</td><td></td></tr>
+    <tr><td>LinkedIn Company Page</td><td>LinkedIn Company Page</td><td></td></tr>
+  </table>
+  <p style="margin-top:0.5rem;"><strong>Fields to add in Clay before export:</strong></p>
+  <ul>
+    <li>Lead Source Category = Outbound</li>
+    <li>Channel (e.g. Outbound — LinkedIn, Outbound — Email)</li>
+    <li>Deal Source (e.g. Outbound Prospecting)</li>
+  </ul>
+
+  <p style="margin-top:0.75rem;"><strong>Contacts export — key fields:</strong></p>
+  <table>
+    <tr><th>Clay Field</th><th>Maps to HubSpot Property</th><th>Notes</th></tr>
+    <tr><td>First Name</td><td>First Name</td><td>Required</td></tr>
+    <tr><td>Last Name</td><td>Last Name</td><td>Required</td></tr>
+    <tr><td>Email</td><td>Email</td><td>Required — drives company association</td></tr>
+    <tr><td>Phone Number</td><td>Phone Number</td><td></td></tr>
+    <tr><td>LinkedIn URL</td><td>LinkedIn URL</td><td></td></tr>
+    <tr><td>Employment Role</td><td>Job Title</td><td></td></tr>
+  </table>
+  <p style="margin-top:0.5rem;"><strong>Fields to leave out:</strong> Lifecycle Stage (contacts should come in with empty lifecycle stage), Lead Status (managed in HubSpot).</p>
+
+  <h4>Part 2 — Running the import in HubSpot</h4>
+  <p><strong>Always import companies first, then contacts.</strong></p>
+  <p><strong>Import 1 — Companies:</strong></p>
+  <ol>
+    <li>Go to Contacts → Import → Import a file → Single file → Companies</li>
+    <li>Map columns carefully</li>
+    <li>Select Create and update Companies</li>
+    <li>Name the import: e.g. <code>2026-03 — Fintech Outbound — Series B — Companies</code></li>
+  </ol>
+  <p><strong>Import 2 — Contacts:</strong></p>
+  <ol>
+    <li>Go to Contacts → Import → Import a file → Single file → Contacts</li>
+    <li>Map columns carefully — Email is critical</li>
+    <li>Select Create and update Contacts</li>
+    <li>Name the import: e.g. <code>2026-03 — Fintech Outbound — Series B — Contacts</code></li>
+  </ol>
+
+  <h4>After the import</h4>
+  <ol>
+    <li>Check both import summaries</li>
+    <li>Spot-check 5–10 contact records</li>
+    <li>Fix orphaned contacts manually (personal emails or domain mismatches won't auto-associate)</li>
+    <li>Do not manually set Lifecycle Stage</li>
+  </ol>
+</div>
+
+<h3>7.3 Outbound: Moving a contact through lifecycle stages</h3>
+<div class="card card-default">
+  <table>
+    <tr><th>From</th><th>To</th><th>When to move</th></tr>
+    <tr><td>(empty)</td><td>Lead</td><td>Genuine trigger signal exists — funding round, hiring signal, leadership change</td></tr>
+    <tr><td>Lead</td><td>MQL</td><td>Contact responded positively, call booked</td></tr>
+    <tr><td>MQL</td><td>SQL</td><td>First call with Sean done, fit + budget confirmed</td></tr>
+    <tr><td>SQL</td><td>Opportunity</td><td>Second conversation with clear intent — create deal now</td></tr>
+  </table>
+  <div class="rule">Don't set Lead just because imported. Don't create deal at SQL. Don't move contacts backwards if they go cold.</div>
+</div>
+
+<h3>7.4 Inbound: Reviewing a new Lead (Barbora)</h3>
+<div class="card card-default">
+  <p>When WF-03 fires, Barbora receives a task — "New Inbound Lead - Check."</p>
+  <ol>
+    <li>Open the contact — who are they, does their company fit OAK'S LAB's ICP?</li>
+    <li>If worth passing to Josh: Upgrade to MQL, assign to Josh Urban, create a follow-up task for Josh</li>
+    <li>If not worth pursuing: Leave as Lead, add a note, close the task</li>
+  </ol>
+</div>
+
+<h3>7.5 Inbound: Handling a new MQL (Josh)</h3>
+<div class="card card-default">
+  <p>Josh receives: Slack notification + task + email notification.</p>
+
+  <h4>Step 1 — Review the contact</h4>
+  <p>Open the contact record. Check who they are, what company, does it fit OAK'S LAB's ICP?</p>
+
+  <h4>Step 2 — Score the company</h4>
+  <p>Set the Ideal Customer Profile Tier on the associated company record: Tier 1 — ideal fit, prioritise immediately · Tier 2 — strong fit, one unknown · Tier 3 — partial fit, longer term play · Not our ICP — disqualify. See Section 6.1 for full tier definitions.</p>
+
+  <h4>Step 3 — If not a fit</h4>
+  <ol>
+    <li>Set ICP Tier → Not our ICP on the company record</li>
+    <li>Make a note on the contact record</li>
+    <li>No further action</li>
+  </ol>
+
+  <h4>Step 4 — If worth pursuing</h4>
+  <ol>
+    <li>Confirm the call or reach out to schedule</li>
+    <li>Update Lifecycle Stage → SQL</li>
+  </ol>
+
+  <h4>Step 5 — After the call</h4>
+  <p><strong>Fit confirmed:</strong></p>
+  <ol>
+    <li>Update Lifecycle Stage → Opportunity</li>
+    <li>Create a deal (enters pipeline at Call with Leadership or Discovery)</li>
+    <li>Score the Deal Quality using the <a href="https://docs.google.com/spreadsheets/d/1ym6Csd1KzLWKICdZYn_E4KZQOvAvTd7gzXQT8mCh3j8/edit?gid=0#gid=0" target="_blank">Lead Scoring Matrix</a>.</li>
+  </ol>
+  <p><strong>Not a fit:</strong></p>
+  <ol>
+    <li>Set ICP Tier → Not our ICP on the company record</li>
+    <li>Make a note — no deal created</li>
+  </ol>
+</div>
+
+<!-- CLUTCH -->
+<h3 id="clutch">7.6 Inbound: Handling a Clutch Lead (Josh)</h3>
+<div class="card card-purple">
+  <p>Clutch is a B2B marketplace where companies find service providers. When someone reaches out to OAK'S LAB through Clutch, Josh receives an email from <code>no-reply@clutch.co</code> with the lead details: company name, lead name, main service requested, website, and project objectives.</p>
+  <p style="margin-top:0.5rem;">These are active project inquiries — they enter HubSpot as MQL (same logic as Talk to Sales form submissions). <strong>There is no workflow for Clutch leads; Josh handles everything manually.</strong></p>
+
+  <h4>Step-by-step</h4>
+  <ol>
+    <li>Check the Clutch email for lead details (company, contact name, service, website, objectives)</li>
+    <li>Search HubSpot for the company — if it doesn't exist, create it: Company Name, Industry, Country/Region, LinkedIn Company Page, Website</li>
+    <li>Open the company record and create the contact from there (so the association is automatic): First Name, Last Name, Job Title</li>
+    <li>Set Lead Source Category = Inbound</li>
+    <li>Set Channel = Clutch</li>
+    <li>Set Contact Owner = Josh</li>
+    <li>Set Lifecycle Stage = MQL</li>
+    <li>Set the ICP Tier on the company record (see Section 6.1 for definitions)</li>
+    <li>Reply to the lead via the Clutch Dashboard and schedule a call</li>
+    <li>Once scheduled and pre-qualified, update Lifecycle Stage → SQL</li>
+  </ol>
+
+  <h4>After the call</h4>
+  <p><strong>Fit confirmed:</strong></p>
+  <ol>
+    <li>Update Lifecycle Stage → Opportunity</li>
+    <li>Create a deal (enters pipeline at Call with Leadership or Discovery)</li>
+    <li>Score the Deal Quality using the <a href="https://docs.google.com/spreadsheets/d/1ym6Csd1KzLWKICdZYn_E4KZQOvAvTd7gzXQT8mCh3j8/edit?gid=0#gid=0" target="_blank">Lead Scoring Matrix</a>.</li>
+  </ol>
+  <p><strong>Not a fit:</strong></p>
+  <ol>
+    <li>Set ICP Tier → Not our ICP on the company record</li>
+    <li>Make a note on the contact record — no deal created</li>
+  </ol>
+</div>
+
+<h3>7.7 Both: Creating a deal and moving it through the pipeline</h3>
+<div class="card card-default">
+  <h4>Creating a deal</h4>
+  <ol>
+    <li>Open the contact record</li>
+    <li>Update Lifecycle Stage → Opportunity</li>
+    <li>In the Deals panel, click + Add</li>
+    <li>Name = company name only (e.g. "Acme")</li>
+    <li>Pipeline = New Business</li>
+    <li>Stage = Call with Leadership (or Discovery if Jake is skipped)</li>
+    <li>Set Deal Type — New Business or Existing Business</li>
+    <li>Set Channel — Outbound, Inbound, or Client Expansion</li>
+    <li>Fill required properties for the stage</li>
+    <li>Click Create deal</li>
+    <li>Score the Deal Quality using the <a href="https://docs.google.com/spreadsheets/d/1ym6Csd1KzLWKICdZYn_E4KZQOvAvTd7gzXQT8mCh3j8/edit?gid=0#gid=0" target="_blank">Lead Scoring Matrix</a>.</li>
+  </ol>
+  <p style="margin-top:0.5rem;">Sean creates outbound deals. Josh creates inbound deals.</p>
+
+  <h4>Moving a deal through the pipeline</h4>
+  <table>
+    <tr><th>Moving to</th><th>What should be true</th></tr>
+    <tr><td>Discovery</td><td>Introductory call with Jake done, strategic fit confirmed</td></tr>
+    <tr><td>Proposal</td><td>Requirements scoped, ready to send proposal</td></tr>
+    <tr><td>Negotiation</td><td>Proposal sent, reviewing terms</td></tr>
+    <tr><td>Contract</td><td>Commercial terms agreed</td></tr>
+    <tr><td>Closed Won</td><td>Contract signed</td></tr>
+    <tr><td>Closed Lost</td><td>No longer moving forward — loss reason required</td></tr>
+    <tr><td>Nurture</td><td>Good fit but not ready — nurture reason required</td></tr>
+  </table>
+  <div class="tip">Always fill required properties. Keep close date up to date. Add notes after every significant interaction.</div>
+</div>
+
+<h3>7.8 Both: Moving a deal to Nurture or Closed Lost</h3>
+<div class="card card-default">
+  <h4>Nurture</h4>
+  <p>Use when there is genuine potential within 6 months but not right now.</p>
+  <ul>
+    <li>Fill Nurture Reason (required)</li>
+    <li>Reminders at 2, 4, 6 months</li>
+    <li>Auto-closes to Closed Lost after 6 months with no action</li>
+    <li><strong>Do not use Nurture to avoid Closed Lost</strong></li>
+  </ul>
+
+  <h4>Closed Lost</h4>
+  <p>Use when there is no realistic prospect within 6 months.</p>
+  <ul>
+    <li>Fill Loss reason (required, cannot skip)</li>
+    <li>After 6 months: email + task to check back in</li>
+  </ul>
+</div>
+
+<!-- ===== 8. SCENARIOS ===== -->
+<h2 id="scenarios">8. Common Scenarios & Edge Cases</h2>
+
+<h3>8.1 Handling spam or junk inbound form submissions</h3>
+<div class="card card-default">
+  <p>Occasionally, the Talk to Sales form will be submitted by spam bots or clearly irrelevant contacts. Because WF-02 fires on all Talk to Sales submissions, these contacts will be assigned to Josh automatically.</p>
+
+  <h4>What to do:</h4>
+  <ol>
+    <li>Open the contact record</li>
+    <li>Confirm it's spam or clearly irrelevant</li>
+    <li>Leave the contact as is — do not update lifecycle stage, tier, or any properties</li>
+    <li>Do not create a deal</li>
+    <li>Optionally add a short note on the record (e.g. "Spam — no action")</li>
+    <li>Close the task</li>
+  </ol>
+  <p style="margin-top:0.5rem;"><strong>Why not delete or disqualify?</strong> The new CRM logic focuses on SQLs and leads. Junk contacts sitting in the system with no properties set do not affect reporting or workflows. Deleting them creates more admin than leaving them alone. Deleting contacts can also cause issues with workflow history and association records.</p>
+  <div class="tip">If a spam contact is assigned to Josh and it bothers you from a data cleanliness perspective, set ICP Tier → Not our ICP on the associated company — this ensures it never gets pulled into tier-based reporting.</div>
+</div>
+
+<h3>8.2 Step-by-step: new outbound contact — what do I do?</h3>
+<div class="card card-default">
+  <p>This section exists because the old habit was to create a deal immediately on import. <strong>That is no longer correct.</strong> Contacts must move through lifecycle stages first. A deal is only created at Opportunity.</p>
+
+  <h4>Step 1 — Contact arrives in HubSpot</h4>
+  <ul>
+    <li>Lifecycle Stage is empty — this is correct, do not change it yet</li>
+    <li>Lead Source Category = Outbound (set automatically by WF-05 or filled manually)</li>
+    <li>No deal exists — this is correct</li>
+  </ul>
+
+  <h4>Step 2 — Is there a genuine trigger signal?</h4>
+  <p>A trigger signal is a specific reason to reach out now — e.g. a funding round, a new CTO hire, a hiring spike, a leadership change, or a direct inbound signal.</p>
+  <ul>
+    <li><strong>Yes →</strong> set Lifecycle Stage = Lead. Begin outreach.</li>
+    <li><strong>No →</strong> leave the stage empty. The contact exists in HubSpot for future reference. Do not set Lead just because they've been imported.</li>
+  </ul>
+
+  <h4>Step 3 — Outreach begins. Contact responds positively and a call is booked.</h4>
+  <p>Set Lifecycle Stage → MQL. This is the signal that a real conversation is starting.</p>
+
+  <h4>Step 4 — First call with Sean happens. Fit and budget confirmed.</h4>
+  <p>Set Lifecycle Stage → SQL. Still no deal. The deal does not exist yet.</p>
+
+  <h4>Step 5 — Second conversation. Clear intent to move forward.</h4>
+  <ol>
+    <li>Set Lifecycle Stage → Opportunity</li>
+    <li>Now create the deal. Enter pipeline at Call with Leadership.</li>
+    <li>Score the Deal Quality using the <a href="https://docs.google.com/spreadsheets/d/1ym6Csd1KzLWKICdZYn_E4KZQOvAvTd7gzXQT8mCh3j8/edit?gid=0#gid=0" target="_blank">Lead Scoring Matrix</a>.</li>
+  </ol>
+
+  <div class="rule">The rule: No deal until Opportunity. A deal represents an active commercial conversation with confirmed intent — not just a promising contact.</div>
+</div>
+
+<!-- ===== 9. FAQ ===== -->
+<h2 id="faq">9. Frequently Asked Questions</h2>
+
+<div class="card card-teal">
+  <h3>How do I create a filtered view in HubSpot?</h3>
+  <p>Go to Contacts (or Companies/Deals) → click "All filters" on the left → add your filter criteria → click "Save view" in the top right. Name it and choose whether to share it with the team or keep it private.</p>
+</div>
+
+<div class="card card-teal">
+  <h3>How do I create a report?</h3>
+  <p>Go to Reporting → Reports → Create report. Choose "Single object" for simple reports or "Custom report builder" for cross-object data. Select your data source, add filters, and pick a chart type. Save to a dashboard.</p>
+</div>
+
+<div class="card card-teal">
+  <h3>How do I set up a HubSpot integration?</h3>
+  <p>Go to Settings (gear icon) → Integrations → Connected apps → Visit App Marketplace. Search for the tool you want to connect, click "Install", and follow the authorization flow. Each integration has its own setup steps.</p>
+</div>
+
+<div class="card card-teal">
+  <h3>How do I export data from HubSpot?</h3>
+  <p>Go to the relevant object (Contacts, Companies, Deals) → select the view or filters you want → click "Export" (top right of the table). Choose format (CSV or XLSX) and which properties to include.</p>
+</div>
+
+<div class="card card-teal">
+  <h3>How do I manage email templates?</h3>
+  <p>Go to Conversations → Templates. Click "New template" to create one. Use personalization tokens (e.g. <code>{{contact.firstname}}</code>) for dynamic content. Templates can be shared with the team.</p>
+</div>
+
+<div class="card card-teal">
+  <h3>How do I track email opens and clicks?</h3>
+  <p>Email tracking is automatic for emails sent via HubSpot (logged in CRM). To track emails from Gmail/Outlook, install the HubSpot browser extension or Outlook add-in. Go to Settings → General → Email to configure tracking preferences.</p>
+</div>
+
+<div class="card card-teal">
+  <h3>How do I merge duplicate contacts or companies?</h3>
+  <p>Open one of the duplicate records → click "Actions" dropdown → "Merge". Search for the other duplicate. Review which property values to keep. Click "Merge". <strong>This cannot be undone.</strong></p>
+</div>
+
+<div class="card card-teal">
+  <h3>How do I assign or reassign a contact owner?</h3>
+  <p>Open the contact record → in the left sidebar, find "Contact owner" → click the dropdown → select the new owner. Bulk reassignment: select multiple contacts in list view → click "Assign" in the toolbar.</p>
+</div>
+
+<!-- ===== 10. TIPS ===== -->
+<h2 id="tips">10. General HubSpot Tips</h2>
+
+<div class="card card-teal">
+  <ul>
+    <li><strong>Activity feed:</strong> Check your activity feed daily (bell icon) for task reminders, form submissions, and email replies.</li>
+    <li><strong>Notes:</strong> Always log notes after calls or meetings — keeps the team aligned and creates a paper trail.</li>
+    <li><strong>Tasks:</strong> Use HubSpot tasks instead of your own to-do list for CRM follow-ups. They show up in your daily queue.</li>
+    <li><strong>Board view vs. list view:</strong> Use board view for deals pipeline (drag and drop), list view for contacts/companies (bulk actions).</li>
+    <li><strong>Keyboard shortcuts:</strong> Press <code>G</code> then <code>C</code> to go to contacts, <code>G</code> then <code>D</code> for deals. Press <code>?</code> to see all shortcuts.</li>
+  </ul>
+</div>
+
+<!-- ===== 11. TBD ===== -->
+<h2 id="tbd">11. To Be Discussed & Decided</h2>
+
+<div class="card card-orange">
+  <h3>Inbound form updates <span class="tag tag-tbd">TBD</span></h3>
+  <p>Two open questions:</p>
+  <ol>
+    <li><strong>Company name field</strong> — currently not collected on inbound forms. Without a company name, HubSpot cannot auto-associate the contact to a company. Decision needed: add a Company Name field to the form, or handle association manually post-submission?</li>
+    <li><strong>Self-reported attribution</strong> — the field is ready in HubSpot. Decision needed: add to the form now or later?</li>
+  </ol>
+</div>
+
+<div class="card card-orange">
+  <h3>Lead Intake stage <span class="tag tag-tbd">TBD</span></h3>
+  <p>Needs to be reviewed and removed once lifecycle stage migration is complete. Agree on timing and confirm no deals remain before removing.</p>
+</div>
+
+<footer>
+  OAK'S LAB — HubSpot CRM Logic & BD Training Guide · March 2026
+</footer>
+
+</body>
+</html>
